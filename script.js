@@ -241,6 +241,97 @@ socialLinks.forEach(link => {
     });
 });
 
+// AI Chatbot Logic
+const chatToggle = document.getElementById('chat-toggle');
+const closeChat = document.getElementById('close-chat');
+const chatContainer = document.getElementById('chat-container');
+const chatInput = document.getElementById('chat-input');
+const sendBtn = document.getElementById('send-btn');
+const chatMessages = document.getElementById('chat-messages');
+const sessionId = 'session_' + Math.random().toString(36).substring(2, 9);
+
+// Toggle Chat Window
+chatToggle.addEventListener('click', () => {
+    chatContainer.classList.toggle('hidden');
+    if (!chatContainer.classList.contains('hidden')) {
+        chatInput.focus();
+    }
+});
+
+closeChat.addEventListener('click', () => {
+    chatContainer.classList.add('hidden');
+});
+
+// Add Message to UI
+function addMessage(text, isOutgoing = false) {
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isOutgoing ? 'outgoing' : 'incoming'}`;
+    
+    if (isOutgoing) {
+        const p = document.createElement('p');
+        p.textContent = text;
+        messageDiv.appendChild(p);
+    } else {
+        // Use marked for incoming messages to render markdown
+        messageDiv.innerHTML = typeof marked !== 'undefined' ? marked.parse(text) : `<p>${text}</p>`;
+    }
+    
+    chatMessages.appendChild(messageDiv);
+    
+    // Smooth scroll to bottom
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+// Send Message to Backend
+async function sendMessage() {
+    const text = chatInput.value.trim();
+    if (!text) return;
+
+    // Add user message
+    addMessage(text, true);
+    chatInput.value = '';
+
+    // Add typing indicator (optional)
+    const typingIndicator = document.createElement('div');
+    typingIndicator.className = 'message incoming';
+    typingIndicator.innerHTML = '<p><em>Thinking...</em></p>';
+    chatMessages.appendChild(typingIndicator);
+    chatMessages.scrollTop = chatMessages.scrollHeight;
+
+    try {
+        const response = await fetch('http://localhost:8000/chat', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ 
+                message: text,
+                session_id: sessionId
+            }),
+        });
+
+        if (!response.ok) throw new Error('Failed to connect to AI server');
+
+        const data = await response.json();
+        
+        // Remove typing indicator
+        chatMessages.removeChild(typingIndicator);
+        
+        // Add AI response
+        addMessage(data.reply);
+    } catch (error) {
+        console.error('Chat Error:', error);
+        chatMessages.removeChild(typingIndicator);
+        addMessage("Sorry, I'm having trouble connecting to my brain right now. Please try again later!");
+    }
+}
+
+// Event Listeners for Input
+sendBtn.addEventListener('click', sendMessage);
+chatInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') sendMessage();
+});
+
 // Console message for developers
 console.log('%c👋 Welcome to Paresh Prajapati\'s Portfolio!', 'color: #6366f1; font-size: 20px; font-weight: bold;');
 console.log('%cInterested in the code? Feel free to reach out!', 'color: #8b5cf6; font-size: 14px;');
