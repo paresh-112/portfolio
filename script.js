@@ -282,7 +282,7 @@ function addMessage(text, isOutgoing = false) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Send Message to Backend with Real-Time LLM Token Streaming
+// Send Message to Backend with Real-Time LLM Token Streaming or JSON/Text Response
 async function sendMessage() {
     const text = chatInput.value.trim();
     if (!text) return;
@@ -317,8 +317,39 @@ async function sendMessage() {
             }),
         });
 
-        if (!response.ok) throw new Error('Failed to connect to AI server');
+        if (!response.ok) {
+            const errData = await response.json().catch(() => ({}));
+            throw new Error(errData.error || `Server error (${response.status})`);
+        }
 
+        const contentType = response.headers.get('content-type') || '';
+
+        // If server returns standard JSON or plain text (e.g. Netlify Function)
+        if (contentType.includes('application/json') || !contentType.includes('text/event-stream')) {
+            const rawText = await response.text();
+            let fullReply = '';
+
+            try {
+                const parsed = JSON.parse(rawText);
+                if (parsed.error) {
+                    throw new Error(parsed.error);
+                }
+                fullReply = parsed.reply || parsed.content || parsed.message || '';
+            } catch (e) {
+                if (e.message && parsed?.error) throw e;
+                // If not JSON, use raw plain text
+                fullReply = rawText;
+            }
+
+            // If we got a valid JSON/plain-text reply, render and return
+            if (fullReply) {
+                contentDiv.innerHTML = typeof marked !== 'undefined' ? marked.parse(fullReply) : `<p>${fullReply}</p>`;
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                return;
+            }
+        }
+
+        // Handle Real-Time SSE Stream (e.g. Express backend)
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
         let fullText = '';
@@ -367,7 +398,7 @@ async function sendMessage() {
         }
     } catch (error) {
         console.error('Chat Error:', error);
-        contentDiv.innerHTML = "<p>Sorry, I'm having trouble connecting right now. Please try again later!</p>";
+        contentDiv.innerHTML = `<p>Sorry, I'm having trouble connecting right now (${error.message}). Please try again later!</p>`;
     }
 }
 
