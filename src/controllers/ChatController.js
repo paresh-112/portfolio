@@ -85,7 +85,7 @@ class ChatController {
       });
 
       return {
-        statusCode: 200,
+        statusCode: 200, // add code
         headers: corsHeaders,
         body: JSON.stringify({ reply: fullReply })
       };
