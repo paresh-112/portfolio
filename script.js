@@ -282,7 +282,7 @@ function addMessage(text, isOutgoing = false) {
     chatMessages.scrollTop = chatMessages.scrollHeight;
 }
 
-// Send Message to Backend
+// Send Message to Backend with Real-Time LLM Token Streaming
 async function sendMessage() {
     const text = chatInput.value.trim();
     if (!text) return;
@@ -291,15 +291,22 @@ async function sendMessage() {
     addMessage(text, true);
     chatInput.value = '';
 
-    // Add typing indicator (optional)
-    const typingIndicator = document.createElement('div');
-    typingIndicator.className = 'message incoming';
-    typingIndicator.innerHTML = '<p><em>Thinking...</em></p>';
-    chatMessages.appendChild(typingIndicator);
+    // Create incoming AI message container
+    const messageDiv = document.createElement('div');
+    messageDiv.className = 'message incoming';
+    const contentDiv = document.createElement('div');
+    contentDiv.innerHTML = '<p><em>Thinking...</em></p>';
+    messageDiv.appendChild(contentDiv);
+    chatMessages.appendChild(messageDiv);
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
+    // Resolve API endpoint based on environment (Netlify vs Local file)
+    const apiEndpoint = window.location.protocol === 'file:' 
+        ? 'http://localhost:8000/api/chat' 
+        : '/api/chat';
+
     try {
-        const response = await fetch('http://localhost:8000/chat', {
+        const response = await fetch(apiEndpoint, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -312,17 +319,55 @@ async function sendMessage() {
 
         if (!response.ok) throw new Error('Failed to connect to AI server');
 
-        const data = await response.json();
-        
-        // Remove typing indicator
-        chatMessages.removeChild(typingIndicator);
-        
-        // Add AI response
-        addMessage(data.reply);
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let fullText = '';
+        let isFirstChunk = true;
+        let streamBuffer = '';
+
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+
+            streamBuffer += decoder.decode(value, { stream: true });
+            const lines = streamBuffer.split('\n');
+            // Keep the last potentially incomplete line in streamBuffer
+            streamBuffer = lines.pop() || '';
+
+            for (const line of lines) {
+                const trimmed = line.trim();
+                if (!trimmed || !trimmed.startsWith('data:')) continue;
+
+                const dataStr = trimmed.replace(/^data:\s*/, '').trim();
+                if (dataStr === '[DONE]') break;
+
+                try {
+                    const parsed = JSON.parse(dataStr);
+                    if (parsed.content) {
+                        if (isFirstChunk) {
+                            fullText = '';
+                            isFirstChunk = false;
+                        }
+                        fullText += parsed.content;
+                        contentDiv.innerHTML = typeof marked !== 'undefined' ? marked.parse(fullText) : `<p>${fullText}</p>`;
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    } else if (parsed.reply) {
+                        fullText = parsed.reply;
+                        contentDiv.innerHTML = typeof marked !== 'undefined' ? marked.parse(fullText) : `<p>${fullText}</p>`;
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                } catch (e) {
+                    // Ignore parse error for non-JSON SSE metadata
+                }
+            }
+        }
+
+        if (!fullText) {
+            contentDiv.innerHTML = "<p>Sorry, I didn't receive a response. Please try again.</p>";
+        }
     } catch (error) {
         console.error('Chat Error:', error);
-        chatMessages.removeChild(typingIndicator);
-        addMessage("Sorry, I'm having trouble connecting to my brain right now. Please try again later!");
+        contentDiv.innerHTML = "<p>Sorry, I'm having trouble connecting right now. Please try again later!</p>";
     }
 }
 
