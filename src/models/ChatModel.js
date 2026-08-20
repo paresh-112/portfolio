@@ -37,12 +37,9 @@ class ChatModel {
     } catch (error) {
       console.warn("Groq API streaming notice:", error.message);
       
-      let fallbackReply = "";
-      if (error.message.includes("401") || error.message.includes("GROQ_API_KEY_MISSING") || error.message.includes("Invalid API Key")) {
-        fallbackReply = `⚠️ **Groq API Key Notice**: Your current \`GROQ_API_KEY\` in \`.env\` returned an authentication error (401 Invalid API Key). Please replace it with a valid API key from [Groq Console](https://console.groq.com/keys).\n\n` + KnowledgeModel.getFallbackResponse(message);
-      } else {
-        fallbackReply = KnowledgeModel.getFallbackResponse(message);
-      }
+      // Fall back to the built-in knowledge base silently — visitors should
+      // never see internal API-key or provider errors.
+      const fallbackReply = KnowledgeModel.getFallbackResponse(message);
 
       // Stream fallback reply chunk by chunk to simulate smooth streaming UX
       const chunkSize = 8;
