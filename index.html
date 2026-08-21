@@ -47,6 +47,7 @@
             <div class="hero-grid"></div>
             <div class="hero-glow hero-glow-1"></div>
             <div class="hero-glow hero-glow-2"></div>
+            <div class="hero-spotlight" id="heroSpotlight"></div>
         </div>
         <div class="container hero-inner">
             <div class="hero-content">
@@ -75,8 +76,8 @@
                     <a href="tel:+918849581032" title="Phone"><i class="fas fa-phone"></i></a>
                 </div>
             </div>
-            <div class="hero-visual" aria-hidden="true">
-                <div class="terminal-card">
+            <div class="hero-visual">
+                <div class="terminal-card" id="heroTerminal" role="button" tabindex="0" title="Click to open the interactive terminal">
                     <div class="terminal-header">
                         <span class="t-dot t-red"></span>
                         <span class="t-dot t-yellow"></span>
@@ -100,6 +101,7 @@ app = agent.compile(
                         <span class="status-env">aws · fargate</span>
                     </div>
                 </div>
+                <p class="terminal-hint"><i class="fas fa-terminal"></i> click to interact — or press <kbd>~</kbd></p>
             </div>
         </div>
         <a href="#about" class="scroll-hint" aria-label="Scroll down"><i class="fas fa-chevron-down"></i></a>
@@ -615,9 +617,30 @@ app = agent.compile(
             </div>
             <div class="chat-input-container">
                 <input type="text" id="chat-input" placeholder="Ask about skills, projects, fit..." />
+                <button id="mic-btn" class="mic-btn" aria-label="Ask by voice" title="Ask by voice">
+                    <i class="fas fa-microphone"></i>
+                </button>
                 <button id="send-btn" class="send-btn" aria-label="Send">
                     <i class="fas fa-paper-plane"></i>
                 </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terminal Easter Egg -->
+    <div id="terminal-overlay" class="terminal-overlay hidden" aria-hidden="true">
+        <div class="terminal-window" role="dialog" aria-label="Interactive terminal">
+            <div class="terminal-header">
+                <span class="t-dot t-red"></span>
+                <span class="t-dot t-yellow"></span>
+                <span class="t-dot t-green"></span>
+                <span class="terminal-title">paresh@portfolio: ~</span>
+                <button id="terminal-close" class="terminal-close" aria-label="Close terminal">&times;</button>
+            </div>
+            <div id="terminal-output" class="terminal-output"></div>
+            <div class="terminal-input-line">
+                <span class="terminal-prompt">➜ ~</span>
+                <input type="text" id="terminal-input" autocomplete="off" spellcheck="false" aria-label="Terminal command" />
             </div>
         </div>
     </div>

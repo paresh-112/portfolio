@@ -9,7 +9,8 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 app.use(cors());
-app.use(express.json());
+// 10mb: voice queries arrive as base64 audio in the JSON body
+app.use(express.json({ limit: "10mb" }));
 
 // Serve static portfolio files
 app.use(express.static(path.join(__dirname)));

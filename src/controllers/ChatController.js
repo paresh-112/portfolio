@@ -1,7 +1,15 @@
 const ChatModel = require("../models/ChatModel");
+const TranscriptionService = require("../services/TranscriptionService");
+
+const CORS_HEADERS = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
+  "Content-Type": "application/json"
+};
 
 class ChatController {
-  // Express streaming handler
+  // Express streaming handler — SSE events: {trace}, {content}, {meta}, {done}
   static async handleStreamChatMessage(req, res) {
     try {
       const message = req.body?.message || req.body?.input;
@@ -20,9 +28,7 @@ class ChatController {
         res.write(`data: ${JSON.stringify(data)}\n\n`);
       };
 
-      await ChatModel.streamReply(message.trim(), sessionId, (chunk) => {
-        sendEvent({ content: chunk });
-      });
+      await ChatModel.streamReply(message.trim(), sessionId, sendEvent);
 
       sendEvent({ done: true });
       res.write("data: [DONE]\n\n");
@@ -37,19 +43,13 @@ class ChatController {
     }
   }
 
-  // Netlify Serverless Function streaming event handler
+  // Netlify Serverless Function handler — buffered JSON. The pipeline trace
+  // (with real per-step timings) is returned so the frontend can replay it.
   static async handleNetlifyStreamEvent(event, context) {
-    const corsHeaders = {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Headers": "Content-Type, Authorization",
-      "Access-Control-Allow-Methods": "POST, OPTIONS, GET",
-      "Content-Type": "application/json"
-    };
-
     if (event.httpMethod === "OPTIONS") {
       return {
         statusCode: 200,
-        headers: corsHeaders,
+        headers: CORS_HEADERS,
         body: JSON.stringify({ status: "OK" })
       };
     }
@@ -57,7 +57,7 @@ class ChatController {
     if (event.httpMethod !== "POST") {
       return {
         statusCode: 405,
-        headers: corsHeaders,
+        headers: CORS_HEADERS,
         body: JSON.stringify({ error: "Method Not Allowed. Use POST." })
       };
     }
@@ -74,27 +74,77 @@ class ChatController {
       if (!message || typeof message !== "string" || !message.trim()) {
         return {
           statusCode: 400,
-          headers: corsHeaders,
+          headers: CORS_HEADERS,
           body: JSON.stringify({ error: "Field 'message' must be a non-empty string." })
         };
       }
 
-      let fullReply = "";
-      await ChatModel.streamReply(message.trim(), sessionId, (chunk) => {
-        fullReply += chunk;
-      });
+      const { reply, trace, meta } = await ChatModel.streamReply(message.trim(), sessionId);
 
       return {
-        statusCode: 200, // add code
-        headers: corsHeaders,
-        body: JSON.stringify({ reply: fullReply })
+        statusCode: 200,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({ reply, trace, meta })
       };
     } catch (error) {
       console.error("Netlify Event Error:", error);
       return {
         statusCode: 500,
-        headers: corsHeaders,
+        headers: CORS_HEADERS,
         body: JSON.stringify({ error: error.message || "Internal Server Error" })
+      };
+    }
+  }
+
+  // Express voice transcription handler — body: {audio: base64, mime}
+  static async handleTranscribe(req, res) {
+    try {
+      const result = await TranscriptionService.transcribeBase64(req.body?.audio, req.body?.mime);
+      return res.json(result);
+    } catch (error) {
+      const status = error.statusCode || 500;
+      console.error("Transcription Error:", error.message);
+      return res.status(status).json({ error: error.publicMessage || "Transcription failed." });
+    }
+  }
+
+  // Netlify voice transcription handler
+  static async handleNetlifyTranscribeEvent(event, context) {
+    if (event.httpMethod === "OPTIONS") {
+      return {
+        statusCode: 200,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({ status: "OK" })
+      };
+    }
+
+    if (event.httpMethod !== "POST") {
+      return {
+        statusCode: 405,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({ error: "Method Not Allowed. Use POST." })
+      };
+    }
+
+    try {
+      let body = {};
+      if (event.body) {
+        body = typeof event.body === "string" ? JSON.parse(event.body) : event.body;
+      }
+
+      const result = await TranscriptionService.transcribeBase64(body.audio, body.mime);
+
+      return {
+        statusCode: 200,
+        headers: CORS_HEADERS,
+        body: JSON.stringify(result)
+      };
+    } catch (error) {
+      console.error("Netlify Transcription Error:", error.message);
+      return {
+        statusCode: error.statusCode || 500,
+        headers: CORS_HEADERS,
+        body: JSON.stringify({ error: error.publicMessage || "Transcription failed." })
       };
     }
   }

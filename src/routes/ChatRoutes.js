@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.post("/chat", ChatController.handleStreamChatMessage);
 router.post("/api/chat", ChatController.handleStreamChatMessage);
+router.post("/api/transcribe", ChatController.handleTranscribe);
 
 module.exports = router;
