@@ -5,15 +5,8 @@
 [build.environment]
   NODE_VERSION = "20"
 
-[[redirects]]
-  from = "/api/chat"
-  to = "/.netlify/functions/chat"
-  status = 200
-
-[[redirects]]
-  from = "/chat"
-  to = "/.netlify/functions/chat"
-  status = 200
+# /api/chat and /chat are routed by netlify/functions/chat.mjs via its own
+# `config.path` export, so they need no redirect here.
 
 [[redirects]]
   from = "/api/transcribe"

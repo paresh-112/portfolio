@@ -20,8 +20,11 @@ class ChatController {
       }
 
       res.setHeader("Content-Type", "text/event-stream");
-      res.setHeader("Cache-Control", "no-cache");
+      res.setHeader("Cache-Control", "no-cache, no-transform");
       res.setHeader("Connection", "keep-alive");
+      // Without this, nginx-style reverse proxies buffer SSE and nothing
+      // reaches the browser until the response ends.
+      res.setHeader("X-Accel-Buffering", "no");
       res.flushHeaders?.();
 
       const sendEvent = (data) => {
@@ -43,8 +46,10 @@ class ChatController {
     }
   }
 
-  // Netlify Serverless Function handler — buffered JSON. The pipeline trace
-  // (with real per-step timings) is returned so the frontend can replay it.
+  // Buffered JSON handler — returns the finished trace (with real per-step
+  // timings) so a non-streaming transport can replay it. No longer on the
+  // Netlify route, which streams via netlify/functions/chat.mjs; kept as a
+  // fallback for hosts that cannot stream a response body.
   static async handleNetlifyStreamEvent(event, context) {
     if (event.httpMethod === "OPTIONS") {
       return {

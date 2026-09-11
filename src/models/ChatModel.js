@@ -95,11 +95,15 @@ class ChatModel {
       engine = "curated";
       reply = KnowledgeModel.getFallbackResponse(message);
 
-      // Stream fallback reply chunk by chunk to simulate smooth streaming UX
-      const chunkSize = 8;
-      for (let i = 0; i < reply.length; i += chunkSize) {
-        emit({ content: reply.slice(i, i + chunkSize) });
-        await new Promise((resolve) => setTimeout(resolve, 15));
+      // Chunk the curated fallback so it streams like a live reply. With no
+      // listener attached the pacing is invisible, so the sleeps would only
+      // add latency — skip them and let the caller take the reply whole.
+      if (typeof onEvent === "function") {
+        const chunkSize = 8;
+        for (let i = 0; i < reply.length; i += chunkSize) {
+          emit({ content: reply.slice(i, i + chunkSize) });
+          await new Promise((resolve) => setTimeout(resolve, 15));
+        }
       }
     }
 
