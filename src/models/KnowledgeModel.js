@@ -8,7 +8,7 @@ Answer questions about Paresh's skills, experience, projects, and background bas
 SPECIAL INSTRUCTIONS & GUIDELINES:
 - Paresh currently works at Encodedots (since Feb 2026) — you may state this. For any OTHER past employer, NEVER mention, guess, or invent company names: describe the role, dates, and the kind of work, and suggest contacting Paresh directly for specifics.
 - When asked if Paresh is a good fit for a job/role:
-  * If the role involves AI, ML, NLP, Generative AI, LLMs, LangChain/LangGraph, RAG, agentic systems, AWS AI services, or Python backend development: Answer enthusiastically in a POSITIVE way, highlighting relevant production projects (NG Cater, Ctrl Shft, My Greek Odyssey).
+  * If the role involves AI, ML, NLP, Generative AI, LLMs, LangChain/LangGraph, RAG, agentic systems, AWS AI services, or Python backend development: Answer enthusiastically in a POSITIVE way, highlighting relevant production projects (CaterNest, PolicyGuard, IsleWay).
   * If the role is completely unrelated (e.g. Sales, UI/UX design, HR Manager, Finance): Politely state that "This role does not align with Paresh's core expertise in AI/ML Engineering."
   * If partial match: Highlight transferable technical skills in Python, backend APIs, and AI/ML.
 - If an answer cannot be determined from the context, politely say you don't have that specific detail and encourage the user to reach out to Paresh directly via email (prajapatipareshkumar1032@gmail.com) or phone (+91 8849581032).
@@ -58,42 +58,42 @@ LinkedIn: https://www.linkedin.com/in/paresh-prajapati-00a5b7243`
 - Tools & Principles: Git/GitHub, OOP, DBMS, strict typing (mypy), CI quality gates`
   },
   {
-    id: "project-ngcater",
-    title: "NG Cater",
-    keywords: ["ng cater", "ngcater", "cater", "catering", "marketplace", "menu", "food", "ordering", "textract", "bedrock", "opensearch", "fargate"],
-    content: `PROJECT — NG Cater: AI-Powered Catering Marketplace (In Production)
+    id: "project-caternest",
+    title: "CaterNest",
+    keywords: ["caternest", "cater nest", "cater", "catering", "marketplace", "menu", "food", "ordering", "textract", "bedrock", "opensearch", "fargate"],
+    content: `PROJECT — CaterNest: AI-Powered Catering Marketplace (In Production)
 - Business impact: A marketplace connecting businesses with caterers. Paresh built the AI layer — a conversational assistant where customers describe what they need in plain English and it finds caterers, browses menus, and assembles orders; plus a menu-digitization pipeline that turns PDF/photo menus into structured, searchable listings, replacing hours of manual data entry per vendor with minutes.
 - Technical: LangGraph multi-step agent on AWS Bedrock (Claude) with tool-calling; hybrid keyword + vector semantic search over OpenSearch; persistent conversation memory via LangGraph PostgreSQL checkpointer; PII-safe server-sent-event token streaming; menu extraction with AWS Textract OCR + LLM structuring; Redis caching; containerized services on ECS Fargate.
 - Tags: LangGraph, AWS Bedrock, OpenSearch, PostgreSQL, Textract, ECS Fargate.`
   },
   {
-    id: "project-ctrlshft",
-    title: "Ctrl Shft",
-    keywords: ["ctrl", "shft", "ctrl shft", "compliance", "policy", "incident", "complaint", "risk", "regulatory", "verification", "cv parsing", "triage"],
-    content: `PROJECT — Ctrl Shft: Compliance & Policy Intelligence Engine (In Production)
+    id: "project-policyguard",
+    title: "PolicyGuard",
+    keywords: ["policyguard", "policy guard", "compliance", "policy", "incident", "complaint", "risk", "regulatory", "verification", "cv parsing", "triage"],
+    content: `PROJECT — PolicyGuard: Compliance & Policy Intelligence Engine (In Production)
 - Business impact: A compliance platform for organizations in regulated care sectors. Paresh built a suite of AI services turning slow manual compliance workflows into minutes: policy drafting/rewriting aligned to regulatory frameworks, incident & complaint triage, excursion risk assessment, provider document verification, and CV parsing — reducing manual review workload while improving consistency and auditability.
 - Technical: Independent AI microservices per workflow with strict JSON contracts; RAG over ingested regulatory frameworks so outputs cite the rules they follow; document classification + verification pipelines; schema-validated structured LLM outputs; per-request AI usage and cost tracking; FastAPI.
 - Tags: RAG, Document AI, FastAPI, LLM Orchestration, Structured Outputs.`
   },
   {
-    id: "project-mgo",
-    title: "My Greek Odyssey",
-    keywords: ["greek", "odyssey", "mgo", "travel", "tourism", "greece", "concierge", "itinerary", "flutter", "trip"],
-    content: `PROJECT — My Greek Odyssey (MGO): AI Travel Companion (In Production)
-- Business impact: A travel platform for exploring Greece. Paresh built an AI travel concierge that answers destination, itinerary, and logistics questions from the platform's curated knowledge — turning a static content site into an interactive planning experience and keeping users engaged on-platform. Built-in usage tracking keeps AI spend predictable.
+    id: "project-isleway",
+    title: "IsleWay",
+    keywords: ["isleway", "isle way", "travel", "tourism", "island", "destination", "concierge", "itinerary", "flutter", "trip"],
+    content: `PROJECT — IsleWay: AI Travel Companion (In Production)
+- Business impact: A travel platform for exploring Mediterranean island destinations. Paresh built an AI travel concierge that answers destination, itinerary, and logistics questions from the platform's curated knowledge — turning a static content site into an interactive planning experience and keeping users engaged on-platform. Built-in usage tracking keeps AI spend predictable.
 - Technical: FastAPI backend with clean route → controller → service architecture; agentic chat with knowledge-base retrieval; request tracing with per-request IDs, structured logging, uniform response envelopes, centralized error handling; strict typing (mypy --strict) and pre-commit quality gates; background workers; Docker; Flutter cross-platform client.
 - Tags: FastAPI, Agentic AI, RAG, Docker, Flutter.`
   },
   {
     id: "projects-other",
     title: "Other Projects",
-    keywords: ["project", "portfolio", "built", "production", "chatbot", "legal", "hr", "matchmaking", "prestodb", "cassandra", "sql", "voice", "recommendation", "affinity", "intellisearch"],
+    keywords: ["project", "portfolio", "built", "production", "chatbot", "legal", "hr", "matchmaking", "prestodb", "cassandra", "sql", "voice", "recommendation", "querymind", "clauselens", "askhr", "matchmind"],
     content: `OTHER PROJECTS:
-- Database Communication Chatbot: Chatbot leveraging PrestoDB to run SQL over Cassandra; an LLM converts natural-language questions into SQL for non-technical users.
-- Legal IntelliSearch: RAG framework for legal document analysis — precise extraction with citations, in-document text highlighting, and clause comparison across contracts.
-- Intelligent HR Assistant: Voice-enabled agentic HR assistant with dynamic tool triggering — leave balances, holiday lookups, and RAG-grounded policy answers.
-- Affinity AI: LLM-based matchmaking recommendation system with demographic rules and smart filtering; early-stopping reduced API cost; parallel batch execution processed thousands of profiles efficiently.
-FEATURED PRODUCTION PLATFORMS (see dedicated documents): NG Cater (AI catering marketplace), Ctrl Shft (compliance intelligence engine), My Greek Odyssey (AI travel companion).`
+- QueryMind: Chatbot leveraging PrestoDB to run SQL over Cassandra; an LLM converts natural-language questions into SQL for non-technical users.
+- ClauseLens: RAG framework for legal document analysis — precise extraction with citations, in-document text highlighting, and clause comparison across contracts.
+- AskHR: Voice-enabled agentic HR assistant with dynamic tool triggering — leave balances, holiday lookups, and RAG-grounded policy answers.
+- MatchMind: LLM-based matchmaking recommendation system with demographic rules and smart filtering; early-stopping reduced API cost; parallel batch execution processed thousands of profiles efficiently.
+FEATURED PRODUCTION PLATFORMS (see dedicated documents): CaterNest (AI catering marketplace), PolicyGuard (compliance intelligence engine), IsleWay (AI travel companion).`
   },
   {
     id: "education",
@@ -110,7 +110,7 @@ FEATURED PRODUCTION PLATFORMS (see dedicated documents): NG Cater (AI catering m
     keywords: ["fit", "hire", "hiring", "candidate", "suitable", "match", "position", "vacancy", "opening", "recruit", "interview", "genai role"],
     content: `ROLE FIT SUMMARY:
 Paresh is an excellent fit for AI/ML Engineering, Generative AI, agentic systems, RAG, and Python backend roles.
-Evidence: three production AI platforms shipped — NG Cater (AI catering marketplace: LangGraph agent on AWS Bedrock, OpenSearch semantic search, Textract menu digitization), Ctrl Shft (compliance intelligence engine: RAG over regulatory frameworks, document AI microservices), and My Greek Odyssey (AI travel companion: FastAPI agentic chat).
+Evidence: three production AI platforms shipped — CaterNest (AI catering marketplace: LangGraph agent on AWS Bedrock, OpenSearch semantic search, Textract menu digitization), PolicyGuard (compliance intelligence engine: RAG over regulatory frameworks, document AI microservices), and IsleWay (AI travel companion: FastAPI agentic chat).
 Strengths beyond model quality: cost efficiency, latency, streaming architectures, data privacy (PII-safe streaming), and measurable business impact.
 For unrelated roles (Sales, UI/UX design, HR management, Finance): not aligned with his core expertise.`
   }
@@ -156,31 +156,31 @@ class KnowledgeModel {
 *For earlier employer specifics, please reach out to Paresh directly.*`;
     }
 
-    if (q.includes("ng cater") || q.includes("ngcater") || q.includes("cater")) {
-      return `### 🍽️ NG Cater — AI-Powered Catering Marketplace
+    if (q.includes("caternest") || q.includes("cater nest") || q.includes("cater")) {
+      return `### 🍽️ CaterNest — AI-Powered Catering Marketplace
 **Business:** customers order catering conversationally in plain English; caterers digitize PDF/photo menus into searchable listings in minutes instead of hours.
 **Technical:** LangGraph agent on **AWS Bedrock**, hybrid semantic search on **OpenSearch**, persistent memory via **PostgreSQL checkpointer**, **PII-safe streaming**, **Textract + LLM** menu extraction, deployed on **ECS Fargate**.`;
     }
 
-    if (q.includes("ctrl") || q.includes("compliance") || q.includes("policy")) {
-      return `### 🛡️ Ctrl Shft — Compliance & Policy Intelligence
+    if (q.includes("policyguard") || q.includes("policy guard") || q.includes("compliance") || q.includes("policy")) {
+      return `### 🛡️ PolicyGuard — Compliance & Policy Intelligence
 **Business:** automates compliance workflows for regulated care-sector organizations — policy rewriting, incident & complaint triage, risk assessment, document verification, CV parsing.
 **Technical:** suite of **AI microservices** with strict JSON contracts, **RAG over regulatory frameworks**, document classification pipelines, schema-validated outputs, and per-request **AI cost tracking**.`;
     }
 
-    if (q.includes("greek") || q.includes("mgo") || q.includes("travel")) {
-      return `### 🌍 My Greek Odyssey — AI Travel Companion
+    if (q.includes("isleway") || q.includes("isle way") || q.includes("travel")) {
+      return `### 🌍 IsleWay — AI Travel Companion
 **Business:** an AI concierge that answers destination and itinerary questions from curated knowledge, turning a content site into an interactive planner.
 **Technical:** **FastAPI** layered architecture, agentic chat with knowledge retrieval, request tracing, usage/cost tracking, strict typing, Docker, and a **Flutter** client.`;
     }
 
     if (q.includes("project") || q.includes("portfolio") || q.includes("built") || q.includes("production")) {
       return `### 🚀 Featured Production Projects
-1. **NG Cater** — AI catering marketplace: conversational ordering assistant + Textract/LLM menu digitization (LangGraph, Bedrock, OpenSearch, Fargate).
-2. **Ctrl Shft** — compliance intelligence engine: policy rewriting, incident triage, risk & document verification AI services (RAG, FastAPI).
-3. **My Greek Odyssey** — AI travel companion for a Greece tourism platform (FastAPI, agentic chat, Flutter).
+1. **CaterNest** — AI catering marketplace: conversational ordering assistant + Textract/LLM menu digitization (LangGraph, Bedrock, OpenSearch, Fargate).
+2. **PolicyGuard** — compliance intelligence engine: policy rewriting, incident triage, risk & document verification AI services (RAG, FastAPI).
+3. **IsleWay** — AI travel companion for a regional island-tourism platform (FastAPI, agentic chat, Flutter).
 
-**Also:** Database Communication Chatbot, Legal IntelliSearch, Intelligent HR Assistant, Affinity AI.`;
+**Also:** QueryMind, ClauseLens, AskHR, MatchMind.`;
     }
 
     if (q.includes("contact") || q.includes("email") || q.includes("phone") || q.includes("reach") || q.includes("linkedin") || q.includes("github")) {
@@ -202,7 +202,7 @@ class KnowledgeModel {
       return `### 🤖 Candidate Fit Assessment
 Paresh is an excellent fit for **AI/ML Engineering, Generative AI, agentic systems, RAG, and Python backend roles**.
 
-He has shipped **three production AI platforms** — an AI catering marketplace (NG Cater), a compliance intelligence engine (Ctrl Shft), and an AI travel companion (My Greek Odyssey) — on AWS with LangGraph, Bedrock, and FastAPI. Contact him at prajapatipareshkumar1032@gmail.com!`;
+He has shipped **three production AI platforms** — an AI catering marketplace (CaterNest), a compliance intelligence engine (PolicyGuard), and an AI travel companion (IsleWay) — on AWS with LangGraph, Bedrock, and FastAPI. Contact him at prajapatipareshkumar1032@gmail.com!`;
     }
 
     return `Hi! I'm Paresh's AI Assistant.
@@ -212,7 +212,7 @@ Paresh Prajapati is an **AI/ML Engineer & Generative AI Specialist** with 3+ yea
 Feel free to ask me about his:
 - 🛠️ **Skills & Tech Stack**
 - 💼 **Work Experience**
-- 🚀 **Projects** (NG Cater, Ctrl Shft, My Greek Odyssey, and more)
+- 🚀 **Projects** (CaterNest, PolicyGuard, IsleWay, and more)
 - 📞 **Contact Information**`;
   }
 }

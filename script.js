@@ -310,10 +310,10 @@ document intelligence — on AWS with LangChain/LangGraph + FastAPI.</span>`);
 <span class="t-accent">ml/</span>        Pandas · NumPy · TensorFlow · Scikit-learn · Hugging Face`);
     },
     projects() {
-        terminalPrint(`<span class="t-ok">●</span> <span class="t-accent">NG Cater</span>          AI catering marketplace — LangGraph agent, Bedrock, OpenSearch
-<span class="t-ok">●</span> <span class="t-accent">Ctrl Shft</span>         compliance intelligence — RAG over regulatory frameworks
-<span class="t-ok">●</span> <span class="t-accent">My Greek Odyssey</span>  AI travel companion — FastAPI agentic chat
-<span class="t-muted">  + Legal IntelliSearch, HR Assistant, Affinity AI, DB Chatbot</span>
+        terminalPrint(`<span class="t-ok">●</span> <span class="t-accent">CaterNest</span>    AI catering marketplace — LangGraph agent, Bedrock, OpenSearch
+<span class="t-ok">●</span> <span class="t-accent">PolicyGuard</span>  compliance intelligence — RAG over regulatory frameworks
+<span class="t-ok">●</span> <span class="t-accent">IsleWay</span>      AI travel companion — FastAPI agentic chat
+<span class="t-muted">  + ClauseLens, AskHR, MatchMind, QueryMind</span>
 <span class="t-muted">Scroll to the Projects section for the full deep-dives.</span>`);
     },
     contact() {
