@@ -39,8 +39,8 @@ function getChatModel() {
     return new ChatGroq({
       apiKey,
       model: GROQ_MODEL,
-      temperature: 0.7,
-      maxTokens: 1024
+      temperature: 0.6,
+      maxTokens: 600
     });
   } catch (err) {
     console.warn("Failed to initialize ChatGroq model:", err.message);
