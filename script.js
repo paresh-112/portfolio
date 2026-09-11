@@ -563,8 +563,17 @@ chatSuggestions.querySelectorAll('.suggestion-chip').forEach(chip => {
     });
 })();
 
+// Assistant replies are LLM output shaped by visitor input, so the rendered
+// HTML is always sanitized before it reaches the DOM. If either library failed
+// to load we fail closed and render as plain text rather than trusting it.
 function renderMarkdown(text) {
-    return typeof marked !== 'undefined' ? marked.parse(text) : `<p>${text}</p>`;
+    const raw = String(text ?? '');
+    if (typeof marked === 'undefined' || typeof DOMPurify === 'undefined') {
+        const p = document.createElement('p');
+        p.textContent = raw;
+        return p.outerHTML;
+    }
+    return DOMPurify.sanitize(marked.parse(raw, { gfm: true, breaks: true }));
 }
 
 // Add Message to UI
@@ -703,6 +712,40 @@ async function typewriterRender(contentDiv, text) {
     scrollChatToBottom();
 }
 
+// Re-rendering markdown on every token re-parses the whole reply and rebuilds
+// the DOM — that flickers, drops any text the visitor has selected, and gets
+// quadratically slower as the reply grows. Coalesce into at most one paint per
+// STREAM_RENDER_MS so long structured answers stream smoothly.
+const STREAM_RENDER_MS = 60;
+
+function createStreamRenderer(contentDiv) {
+    let scheduled = false;
+    let lastPaint = 0;
+    let latest = '';
+
+    const paint = () => {
+        scheduled = false;
+        lastPaint = performance.now();
+        contentDiv.innerHTML = renderMarkdown(latest);
+        scrollChatToBottom();
+    };
+
+    return {
+        update(text) {
+            latest = text;
+            if (scheduled) return;
+            scheduled = true;
+            const wait = Math.max(0, STREAM_RENDER_MS - (performance.now() - lastPaint));
+            setTimeout(() => requestAnimationFrame(paint), wait);
+        },
+        // Guarantees the complete reply is painted once the stream ends, even
+        // if a throttled render was still pending.
+        finish() {
+            if (latest) paint();
+        }
+    };
+}
+
 // Send Message to Backend with Real-Time LLM Token Streaming or JSON/Text Response
 async function sendMessage() {
     const text = chatInput.value.trim();
@@ -722,6 +765,7 @@ async function sendMessage() {
     const traceUI = createAgentTrace();
     messageDiv.appendChild(traceUI.root);
     const contentDiv = document.createElement('div');
+    contentDiv.className = 'reply-body';
     contentDiv.innerHTML = '<div class="typing-indicator"><span></span><span></span><span></span></div>';
     messageDiv.appendChild(contentDiv);
     chatMessages.appendChild(messageDiv);
@@ -777,11 +821,17 @@ async function sendMessage() {
                 await typewriterRender(contentDiv, fullReply);
                 return;
             }
+
+            // response.text() above already drained the body, so falling
+            // through to the SSE reader would throw. Report the real problem.
+            throw new Error('The server returned an empty response.');
         }
 
         // Handle Real-Time SSE Stream (e.g. Express backend)
         const reader = response.body.getReader();
         const decoder = new TextDecoder('utf-8');
+        const streamRenderer = createStreamRenderer(contentDiv);
+        contentDiv.classList.add('streaming');
         let fullText = '';
         let isFirstChunk = true;
         let streamBuffer = '';
@@ -814,18 +864,18 @@ async function sendMessage() {
                             isFirstChunk = false;
                         }
                         fullText += parsed.content;
-                        contentDiv.innerHTML = renderMarkdown(fullText);
-                        scrollChatToBottom();
+                        streamRenderer.update(fullText);
                     } else if (parsed.reply) {
                         fullText = parsed.reply;
-                        contentDiv.innerHTML = renderMarkdown(fullText);
-                        scrollChatToBottom();
+                        streamRenderer.update(fullText);
                     }
                 } catch (e) {
                     // Ignore parse error for non-JSON SSE metadata
                 }
             }
         }
+
+        streamRenderer.finish();
 
         if (!fullText) {
             contentDiv.innerHTML = "<p>Sorry, I didn't receive a response. Please try again.</p>";
@@ -834,6 +884,7 @@ async function sendMessage() {
         console.error('Chat Error:', error);
         contentDiv.innerHTML = `<p>Sorry, I'm having trouble connecting right now. Please try again later — or reach Paresh directly at <a href="mailto:prajapatipareshkumar1032@gmail.com">prajapatipareshkumar1032@gmail.com</a>.</p>`;
     } finally {
+        contentDiv.classList.remove('streaming');
         isSending = false;
         sendBtn.disabled = false;
         chatInput.focus();

@@ -1459,10 +1459,17 @@ body {
     word-wrap: break-word;
 }
 
+/* Assistant replies carry headings, lists and tables, so they get more room
+   and a taller line-height than the visitor's short outgoing messages. */
+.message.incoming {
+    max-width: 94%;
+    line-height: 1.62;
+}
+
 .message.incoming {
     align-self: flex-start;
-    background: rgba(255, 255, 255, 0.06);
-    border: 1px solid rgba(255, 255, 255, 0.07);
+    background: rgba(255, 255, 255, 0.075);
+    border: 1px solid rgba(255, 255, 255, 0.12);
     color: var(--text-color);
     border-bottom-left-radius: 4px;
 }
@@ -1474,31 +1481,111 @@ body {
     border-bottom-right-radius: 4px;
 }
 
-/* Markdown Styles in Chat */
+/* ---- Markdown structure in assistant replies ----
+   Replies are Markdown, so each element needs a distinct visual weight.
+   Previously every heading level was flattened to 1rem, which erased all
+   structure and made long answers read as one grey block. */
 .message.incoming p {
-    margin-bottom: 0.5rem;
+    margin-bottom: 0.55rem;
 }
 
 .message.incoming p:last-child {
     margin-bottom: 0;
 }
 
-.message.incoming ul,
-.message.incoming ol {
-    margin-left: 1.2rem;
-    margin-bottom: 0.5rem;
+.message.incoming > *:first-child,
+.message.incoming .reply-body > *:first-child {
+    margin-top: 0;
 }
 
-.message.incoming li {
-    margin-bottom: 0.2rem;
+.message.incoming > *:last-child,
+.message.incoming .reply-body > *:last-child {
+    margin-bottom: 0;
 }
 
+/* Headings: a real scale, so h2/h3/h4 are visibly different */
 .message.incoming h1,
 .message.incoming h2,
 .message.incoming h3,
 .message.incoming h4 {
+    font-family: var(--font-display);
+    line-height: 1.3;
+    color: #fff;
+    margin: 1rem 0 0.5rem;
+}
+
+.message.incoming h1 { font-size: 1.16rem; }
+.message.incoming h2 { font-size: 1.08rem; }
+
+/* h3 is the level the assistant reaches for most, so it gets the rule */
+.message.incoming h3 {
     font-size: 1rem;
-    margin: 0.4rem 0;
+    padding-bottom: 0.32rem;
+    border-bottom: 1px solid rgba(129, 140, 248, 0.22);
+}
+
+.message.incoming h4 {
+    font-size: 0.94rem;
+    color: var(--primary-color);
+    letter-spacing: 0.01em;
+}
+
+/* Lists: custom markers that read as deliberate rather than browser default */
+.message.incoming ul,
+.message.incoming ol {
+    margin: 0.5rem 0 0.7rem;
+    padding-left: 1.1rem;
+}
+
+.message.incoming ul {
+    list-style: none;
+}
+
+.message.incoming ol {
+    padding-left: 1.3rem;
+}
+
+.message.incoming li {
+    margin-bottom: 0.38rem;
+}
+
+.message.incoming li:last-child {
+    margin-bottom: 0;
+}
+
+.message.incoming ul > li {
+    position: relative;
+}
+
+.message.incoming ul > li::before {
+    content: '';
+    position: absolute;
+    left: -0.82rem;
+    top: 0.55em;
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background: var(--primary-color);
+}
+
+.message.incoming li > ul,
+.message.incoming li > ol {
+    margin: 0.35rem 0 0;
+}
+
+.message.incoming ::marker {
+    color: var(--primary-color);
+    font-variant-numeric: tabular-nums;
+}
+
+/* Emphasis: bold is how the assistant flags key tech, so make it land */
+.message.incoming strong {
+    color: #fff;
+    font-weight: 650;
+}
+
+.message.incoming em {
+    color: var(--text-color);
 }
 
 .message.incoming code {
@@ -1507,10 +1594,91 @@ body {
     border-radius: 5px;
     font-family: var(--font-mono);
     font-size: 0.83em;
+    color: var(--cyan);
+}
+
+/* Fenced code blocks had no styling at all before */
+.message.incoming pre {
+    background: rgba(7, 11, 20, 0.72);
+    border: 1px solid rgba(255, 255, 255, 0.09);
+    border-radius: 10px;
+    padding: 0.75rem 0.9rem;
+    margin: 0.6rem 0 0.8rem;
+    overflow-x: auto;
+}
+
+.message.incoming pre code {
+    background: none;
+    padding: 0;
+    font-size: 0.82em;
+    line-height: 1.6;
+    white-space: pre;
+}
+
+/* Tables scroll inside the bubble instead of widening it */
+.message.incoming table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    border-collapse: collapse;
+    margin: 0.55rem 0 0.8rem;
+    font-size: 0.85rem;
+}
+
+.message.incoming th,
+.message.incoming td {
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    padding: 0.42rem 0.6rem;
+    text-align: left;
+    vertical-align: top;
+}
+
+.message.incoming th {
+    background: rgba(99, 102, 241, 0.15);
+    color: #fff;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.message.incoming blockquote {
+    margin: 0.55rem 0;
+    padding: 0.15rem 0 0.15rem 0.8rem;
+    border-left: 2px solid var(--primary-color);
+    color: var(--text-muted);
+}
+
+.message.incoming hr {
+    border: none;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 0.85rem 0;
 }
 
 .message.incoming a {
     color: var(--cyan);
+    text-decoration-color: rgba(34, 211, 238, 0.4);
+    text-underline-offset: 2px;
+}
+
+.message.incoming a:hover {
+    text-decoration-color: var(--cyan);
+}
+
+/* Live caret while tokens are still arriving, so streaming is visible */
+.reply-body.streaming > *:last-child::after {
+    content: '';
+    display: inline-block;
+    width: 7px;
+    height: 0.95em;
+    margin-left: 3px;
+    vertical-align: -0.12em;
+    background: var(--primary-color);
+    border-radius: 1px;
+    animation: replyCaret 1.05s steps(2, start) infinite;
+}
+
+@keyframes replyCaret {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
 }
 
 /* Typing indicator */
