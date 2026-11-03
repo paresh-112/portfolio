@@ -48,7 +48,7 @@ LinkedIn: https://www.linkedin.com/in/paresh-prajapati-00a5b7243`
     keywords: ["experience", "job", "work", "role", "career", "employer", "company", "years", "current", "position", "history", "encodedots", "where"],
     content: `WORK EXPERIENCE (current employer Encodedots may be named; do NOT mention or guess any other employer/company names — describe those roles only):
 - Currently working at Encodedots (Feb 2026 – Present).
-- AI Engineer (Sept 2025 – Present):
+- AI Engineer at Encodedots (Feb 2026 – Present):
   * Owns end-to-end AI solution development — system design, agent architecture, deployment, and monitoring on AWS.
   * Designs scalable multi-agent workflows (LangGraph) powering conversational assistants, semantic search, and document intelligence in production.
   * Drives LLM cost efficiency: model selection, caching, token-usage tracking, and streaming architectures.
@@ -60,13 +60,17 @@ LinkedIn: https://www.linkedin.com/in/paresh-prajapati-00a5b7243`
   {
     id: "skills",
     title: "Technical Skills",
-    keywords: ["skill", "stack", "technology", "tech", "python", "aws", "langchain", "langgraph", "fastapi", "docker", "tools", "framework", "library", "database", "cloud", "know"],
+    keywords: ["skill", "stack", "technology", "tech", "python", "aws", "langchain", "langgraph", "fastapi", "docker", "tools", "framework", "library", "database", "cloud", "know", "qdrant", "openrouter", "evals", "fine-tuning", "qlora", "speech"],
     content: `TECHNICAL SKILLS:
-- GenAI & Agents: LLMs, RAG, LangChain, LangGraph, Agentic AI, Prompt Engineering, NLP, Vector Search
-- Languages & Backends: Python, FastAPI, Django, Flask, REST APIs, SSE streaming
-- Cloud & Data: AWS Bedrock, ECS Fargate, AWS Textract, OpenSearch, PostgreSQL, Redis, Docker
-- ML Libraries: Pandas, NumPy, TensorFlow, Scikit-learn, Hugging Face
-- Tools & Principles: Git/GitHub, OOP, DBMS, strict typing (mypy), CI quality gates`
+- GenAI & Agents: LLMs, LangChain, LangGraph, Deep Agents, ReAct & tool-calling agents, multi-agent workflows, text-to-SQL, prompt engineering, structured outputs (Pydantic)
+- RAG & Search: hybrid dense + sparse retrieval, Qdrant, OpenSearch, FastEmbed, Docling, chunking & embedding pipelines, metadata-filtered retrieval
+- LLM Providers: AWS Bedrock, Anthropic Claude, OpenAI, OpenRouter
+- Speech, Vision & Fine-tuning: AssemblyAI (speaker diarization), AWS Textract, Tesseract OCR, QLoRA, synthetic training data, Hugging Face Transformers
+- Backend: Python, FastAPI, Django, Flask, REST APIs, SSE streaming, ARQ/Redis job queues, JWT auth
+- Data: PostgreSQL, MySQL, MongoDB, Redis, SQLAlchemy, Alembic, sqlglot, PrestoDB, Cassandra
+- Cloud & DevOps: AWS (ECS Fargate, S3, Bedrock, Textract), Docker, Docker Compose
+- LLMOps & Quality: LLM evals with labelled sets & replay, OpenTelemetry tracing (Arize Phoenix), Sentry, token & cost tracking, pytest, mypy --strict, ruff, pre-commit
+- ML Libraries: Pandas, NumPy, TensorFlow, Scikit-learn`
   },
   {
     id: "project-caternest",
@@ -80,11 +84,15 @@ LinkedIn: https://www.linkedin.com/in/paresh-prajapati-00a5b7243`
   {
     id: "project-policyguard",
     title: "PolicyGuard",
-    keywords: ["policyguard", "policy guard", "compliance", "policy", "incident", "complaint", "risk", "regulatory", "verification", "cv parsing", "triage"],
-    content: `PROJECT — PolicyGuard: Compliance & Policy Intelligence Engine (In Production)
-- Business impact: A compliance platform for organizations in regulated care sectors. Paresh built a suite of AI services turning slow manual compliance workflows into minutes: policy drafting/rewriting aligned to regulatory frameworks, incident & complaint triage, excursion risk assessment, provider document verification, and CV parsing — reducing manual review workload while improving consistency and auditability.
-- Technical: Independent AI microservices per workflow with strict JSON contracts; RAG over ingested regulatory frameworks so outputs cite the rules they follow; document classification + verification pipelines; schema-validated structured LLM outputs; per-request AI usage and cost tracking; FastAPI.
-- Tags: RAG, Document AI, FastAPI, LLM Orchestration, Structured Outputs.`
+    keywords: ["policyguard", "policy guard", "compliance", "policy", "incident", "complaint", "risk", "regulatory", "verification", "cv parsing", "triage", "school", "safeguarding", "legislation", "excursion", "qdrant", "hybrid", "evals", "tool scan", "ai tool"],
+    content: `PROJECT — PolicyGuard: AI Compliance & Safeguarding Engine for Schools (In Production)
+- Business impact: A safeguarding and compliance platform for schools, where policy reviews, incident reporting and supplier checks are slow, manual and high-stakes. Paresh built the AI engine behind it — a suite of services that scans, rewrites and triages in minutes while a person still signs off on decisions that matter:
+  * Policy compliance scans: scores a school's policies against the current legislation register, lists the gaps, rewrites the policy to close them, reviews changes between policy versions, and suggests refresher training for staff.
+  * Incident & complaint triage: classifies seriousness from the free-text report and proposes the right escalation tier and statutory deadline; designed to escalate when in doubt, and incident suggestions can only raise severity, never lower it.
+  * Risk & verification: excursion risk assessments, supplier certificate verification, CV parsing and candidate briefings, and audits of a school's public online exposure.
+  * AI tool safety scanner: grades AI tools a school wants to adopt against published AI-in-education frameworks, with evidence for each finding.
+- Technical: FastAPI with ARQ/Redis background workers; each service queues work, returns a job ID immediately and streams staged progress over SSE with cancel and retry. Hybrid (dense + sparse) RAG on Qdrant over legislation and framework libraries, scoped by jurisdiction and category, with separate collections so policy and framework text never mix. Docling parses PDF/DOCX into chunked, embedded indexes, evicting stale chunks when a document is replaced. Contract-first, Pydantic-validated JSON outputs per service, so the backend switches from mock to live with a config flag. Every scan records prompt version, model and engine build for reproducibility, and an eval harness replays labelled cases to catch regressions. Per-request token and cost tracking across models served through OpenRouter, attributed per school. Deployed with Docker on AWS ECS.
+- Tags: FastAPI, Hybrid RAG, Qdrant, Document AI, SSE Streaming, LLM Evals.`
   },
   {
     id: "project-isleway",
@@ -98,13 +106,17 @@ LinkedIn: https://www.linkedin.com/in/paresh-prajapati-00a5b7243`
   {
     id: "projects-other",
     title: "Other Projects",
-    keywords: ["project", "portfolio", "built", "production", "chatbot", "legal", "hr", "matchmaking", "prestodb", "cassandra", "sql", "voice", "recommendation", "querymind", "clauselens", "askhr", "matchmind"],
+    keywords: ["project", "portfolio", "built", "production", "chatbot", "legal", "hr", "matchmaking", "prestodb", "cassandra", "sql", "voice", "recommendation", "querymind", "clauselens", "askhr", "matchmind", "finscribe", "financial", "report", "carepilot", "care", "athleteiq", "sports", "athlete", "menuforge", "fine-tune", "fine-tuning", "qlora", "diarization"],
     content: `OTHER PROJECTS:
+- FinScribe: Agent that writes and edits financial reports — a LangChain ReAct agent (Deep Agents) behind FastAPI, streamed over SSE. Every figure is bound to the calculation engine instead of typed by the model, so the agent cannot invent a number. LangGraph checkpointing on Redis plus a custom MySQL saver, OpenTelemetry tracing (Arize Phoenix), token cost tracking.
+- CarePilot: Role-based assistant for a care-services app with per-role toolsets (participant, carer, support worker). Text-to-SQL runs through a guard that parses each query (sqlglot), allows reads only, and rewrites it to the user's permitted data. Also generates on-demand AI reports; FastAPI + ARQ workers on ECS.
+- AthleteIQ: Generates baseline, concussion, and injury assessment reports from athlete data with LangChain + Claude, and treatment plans from session recordings via AssemblyAI speaker diarization; async Redis job queues, MySQL, JWT-secured API.
+- MenuForge: Training-data pipeline for an OCR → structured JSON fine-tune. Labels are generated first, then typeset into menu pages and degraded like real photos, so ground truth is exact by construction; every page is verified against its label. Set up for QLoRA fine-tuning of a vision-language model.
 - QueryMind: Chatbot leveraging PrestoDB to run SQL over Cassandra; an LLM converts natural-language questions into SQL for non-technical users.
 - ClauseLens: RAG framework for legal document analysis — precise extraction with citations, in-document text highlighting, and clause comparison across contracts.
 - AskHR: Voice-enabled agentic HR assistant with dynamic tool triggering — leave balances, holiday lookups, and RAG-grounded policy answers.
 - MatchMind: LLM-based matchmaking recommendation system with demographic rules and smart filtering; early-stopping reduced API cost; parallel batch execution processed thousands of profiles efficiently.
-FEATURED PRODUCTION PLATFORMS (see dedicated documents): CaterNest (AI catering marketplace), PolicyGuard (compliance intelligence engine), IsleWay (AI travel companion).`
+FEATURED PRODUCTION PLATFORMS (see dedicated documents): CaterNest (AI catering marketplace), PolicyGuard (school compliance & safeguarding engine), IsleWay (AI travel companion).`
   },
   {
     id: "education",
@@ -121,7 +133,7 @@ FEATURED PRODUCTION PLATFORMS (see dedicated documents): CaterNest (AI catering 
     keywords: ["fit", "hire", "hiring", "candidate", "suitable", "match", "position", "vacancy", "opening", "recruit", "interview", "genai role"],
     content: `ROLE FIT SUMMARY:
 Paresh is an excellent fit for AI/ML Engineering, Generative AI, agentic systems, RAG, and Python backend roles.
-Evidence: three production AI platforms shipped — CaterNest (AI catering marketplace: LangGraph agent on AWS Bedrock, OpenSearch semantic search, Textract menu digitization), PolicyGuard (compliance intelligence engine: RAG over regulatory frameworks, document AI microservices), and IsleWay (AI travel companion: FastAPI agentic chat).
+Evidence: three production AI platforms shipped — CaterNest (AI catering marketplace: LangGraph agent on AWS Bedrock, OpenSearch semantic search, Textract menu digitization), PolicyGuard (school compliance & safeguarding engine: hybrid RAG on Qdrant, async FastAPI AI services with SSE progress, LLM evals), and IsleWay (AI travel companion: FastAPI agentic chat).
 Strengths beyond model quality: cost efficiency, latency, streaming architectures, data privacy (PII-safe streaming), and measurable business impact.
 For unrelated roles (Sales, UI/UX design, HR management, Finance): not aligned with his core expertise.`
   }
@@ -148,15 +160,17 @@ class KnowledgeModel {
 
     if (q.includes("skill") || q.includes("technology") || q.includes("tech stack") || q.includes("python") || q.includes("aws")) {
       return `### 🛠️ Technical Skills
-- **GenAI & Agents:** LLMs, RAG, LangChain, LangGraph, Agentic AI, Prompt Engineering, NLP
-- **Languages & Backends:** Python, FastAPI, Django, Flask, REST APIs, SSE streaming
-- **Cloud & Data:** AWS Bedrock, ECS Fargate, Textract, OpenSearch, PostgreSQL, Redis, Docker
-- **ML Libraries:** Pandas, NumPy, TensorFlow, Scikit-learn, Hugging Face`;
+- **GenAI & Agents:** LLMs, LangChain, LangGraph, tool-calling agents, text-to-SQL, structured outputs
+- **RAG & Search:** hybrid dense + sparse retrieval, Qdrant, OpenSearch, Docling
+- **Backend:** Python, FastAPI, Django, Flask, SSE streaming, ARQ/Redis job queues
+- **Cloud & Data:** AWS (Bedrock, ECS Fargate, Textract, S3), PostgreSQL, MySQL, MongoDB, Redis, Docker
+- **LLMOps:** LLM evals, OpenTelemetry tracing, token & cost tracking
+- **ML & Fine-tuning:** Pandas, NumPy, TensorFlow, Scikit-learn, Hugging Face, QLoRA`;
     }
 
     if (q.includes("experience") || q.includes("job") || q.includes("work") || q.includes("company") || q.includes("employer")) {
       return `### 💼 Work Experience
-**AI Engineer** *(Sept 2025 – Present)* — currently at **Encodedots** *(since Feb 2026)*
+**AI Engineer** at **Encodedots** *(Feb 2026 – Present)*
 - End-to-end ownership of AI solutions: system design, multi-agent architectures (LangGraph), deployment & monitoring on AWS.
 - Drives LLM cost efficiency through model selection, caching, and streaming.
 

@@ -304,14 +304,16 @@ const TERMINAL_COMMANDS = {
 document intelligence — on AWS with LangChain/LangGraph + FastAPI.</span>`);
     },
     skills() {
-        terminalPrint(`<span class="t-accent">genai/</span>     LLMs · RAG · LangChain · LangGraph · Agentic AI · NLP
-<span class="t-accent">backend/</span>   Python · FastAPI · Django · Flask · SSE streaming
-<span class="t-accent">cloud/</span>     AWS Bedrock · ECS Fargate · Textract · OpenSearch · Redis
-<span class="t-accent">ml/</span>        Pandas · NumPy · TensorFlow · Scikit-learn · Hugging Face`);
+        terminalPrint(`<span class="t-accent">genai/</span>     LLMs · LangChain · LangGraph · tool-calling agents · text-to-SQL
+<span class="t-accent">rag/</span>       hybrid retrieval · Qdrant · OpenSearch · Docling
+<span class="t-accent">backend/</span>   Python · FastAPI · Django · Flask · SSE streaming · ARQ
+<span class="t-accent">cloud/</span>     AWS Bedrock · ECS Fargate · Textract · Redis · MySQL · MongoDB
+<span class="t-accent">llmops/</span>    evals · OpenTelemetry tracing · token &amp; cost tracking
+<span class="t-accent">ml/</span>        Pandas · NumPy · TensorFlow · Scikit-learn · Hugging Face · QLoRA`);
     },
     projects() {
         terminalPrint(`<span class="t-ok">●</span> <span class="t-accent">CaterNest</span>    AI catering marketplace — LangGraph agent, Bedrock, OpenSearch
-<span class="t-ok">●</span> <span class="t-accent">PolicyGuard</span>  compliance intelligence — RAG over regulatory frameworks
+<span class="t-ok">●</span> <span class="t-accent">PolicyGuard</span>  school compliance &amp; safeguarding — hybrid RAG, async AI jobs
 <span class="t-ok">●</span> <span class="t-accent">IsleWay</span>      AI travel companion — FastAPI agentic chat
 <span class="t-muted">  + ClauseLens, AskHR, MatchMind, QueryMind</span>
 <span class="t-muted">Scroll to the Projects section for the full deep-dives.</span>`);

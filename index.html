@@ -124,8 +124,8 @@ app = agent.compile(
                     <p>
                         My recent work spans three production platforms: an <strong>AI-powered catering
                         marketplace</strong> with a conversational ordering assistant and automated menu
-                        digitization, a <strong>compliance intelligence engine</strong> that automates policy
-                        and risk workflows for regulated organizations, and an <strong>AI travel companion</strong>
+                        digitization, a <strong>compliance and safeguarding engine</strong> that automates policy,
+                        incident, and risk workflows for schools, and an <strong>AI travel companion</strong>
                         for a tourism platform.
                     </p>
                     <p>
@@ -170,6 +170,10 @@ app = agent.compile(
                         <span class="skill-tag">Prompt Engineering</span>
                         <span class="skill-tag">NLP</span>
                         <span class="skill-tag">Vector Search</span>
+                        <span class="skill-tag">Hybrid RAG</span>
+                        <span class="skill-tag">Text-to-SQL</span>
+                        <span class="skill-tag">Structured Outputs</span>
+                        <span class="skill-tag">LLM Evals</span>
                     </div>
                 </div>
 
@@ -183,6 +187,9 @@ app = agent.compile(
                         <span class="skill-tag">Flask</span>
                         <span class="skill-tag">REST APIs</span>
                         <span class="skill-tag">SSE Streaming</span>
+                        <span class="skill-tag">ARQ / Redis Queues</span>
+                        <span class="skill-tag">SQLAlchemy</span>
+                        <span class="skill-tag">pytest</span>
                     </div>
                 </div>
 
@@ -197,6 +204,10 @@ app = agent.compile(
                         <span class="skill-tag">PostgreSQL</span>
                         <span class="skill-tag">Redis</span>
                         <span class="skill-tag">Docker</span>
+                        <span class="skill-tag">Qdrant</span>
+                        <span class="skill-tag">MySQL</span>
+                        <span class="skill-tag">MongoDB</span>
+                        <span class="skill-tag">OpenRouter</span>
                     </div>
                 </div>
 
@@ -209,6 +220,9 @@ app = agent.compile(
                         <span class="skill-tag">TensorFlow</span>
                         <span class="skill-tag">Scikit-learn</span>
                         <span class="skill-tag">Hugging Face</span>
+                        <span class="skill-tag">QLoRA</span>
+                        <span class="skill-tag">Docling</span>
+                        <span class="skill-tag">AssemblyAI</span>
                     </div>
                 </div>
             </div>
@@ -224,8 +238,8 @@ app = agent.compile(
                 <div class="timeline-item">
                     <div class="timeline-dot"></div>
                     <div class="timeline-content">
-                        <div class="timeline-date">Sept 2025 – Present</div>
-                        <h3>AI Engineer</h3>
+                        <div class="timeline-date">Feb 2026 – Present</div>
+                        <h3>AI Engineer — Encodedots</h3>
                         <ul>
                             <li>Own end-to-end AI solution development — from system design and agent architecture to deployment and monitoring on AWS</li>
                             <li>Design scalable multi-agent workflows (LangGraph) powering conversational assistants, semantic search, and document intelligence in production</li>
@@ -313,7 +327,7 @@ app = agent.compile(
                         <div class="featured-icon"><i class="fas fa-shield-halved"></i></div>
                         <div>
                             <h3>PolicyGuard</h3>
-                            <p class="featured-tagline">Compliance &amp; Policy Intelligence Engine</p>
+                            <p class="featured-tagline">AI Compliance &amp; Safeguarding Engine for Schools</p>
                         </div>
                         <span class="featured-status">In Production</span>
                     </div>
@@ -324,32 +338,36 @@ app = agent.compile(
                     <div class="view-panes">
                         <div class="view-pane active" data-pane="business">
                             <p>
-                                A compliance platform for organizations in regulated care sectors, where policy work,
-                                incident handling, and document verification are slow, manual, and high-stakes.
-                                I built a suite of AI services that turns those workflows from hours into minutes.
+                                A safeguarding and compliance platform for schools, where policy reviews, incident
+                                reporting, and supplier checks are slow, manual, and high-stakes. I built the AI engine
+                                behind it: a suite of services that scans, rewrites, and triages in minutes, while a
+                                person still signs off on every decision that matters.
                             </p>
                             <ul>
-                                <li><strong>Policy intelligence:</strong> drafts and rewrites organizational policies aligned to regulatory frameworks</li>
-                                <li><strong>Incident &amp; complaint triage:</strong> classifies severity, extracts key facts, and suggests next actions consistently</li>
-                                <li><strong>Risk &amp; verification:</strong> excursion risk assessments, provider document verification, and CV parsing — reducing manual review workload while improving auditability</li>
+                                <li><strong>Policy compliance scans:</strong> scores a school's policies against the current legislation register, lists the gaps, rewrites the policy to close them, and suggests refresher training for staff</li>
+                                <li><strong>Incident &amp; complaint triage:</strong> classifies seriousness from the free-text report and proposes the right escalation and statutory deadline, built to escalate when in doubt and never to downgrade on its own</li>
+                                <li><strong>Risk &amp; verification:</strong> excursion risk assessments, supplier certificate checks, CV parsing with candidate briefings, and audits of a school's public online exposure</li>
+                                <li><strong>AI tool safety scanner:</strong> grades AI tools a school wants to adopt against published AI-in-education frameworks, with evidence for each finding</li>
                             </ul>
                         </div>
                         <div class="view-pane" data-pane="technical">
                             <ul>
-                                <li><strong>AI microservice suite:</strong> independent services per workflow (policy rewrite, incident triage, complaints, risk, document verify, CV parse), each with a strict JSON contract for backend integration</li>
-                                <li><strong>Framework RAG:</strong> regulatory frameworks ingested and retrieved as grounding context so outputs cite the rules they follow</li>
-                                <li><strong>Document AI:</strong> classification + verification pipelines for provider-supplied documents</li>
-                                <li><strong>Structured outputs:</strong> schema-validated LLM responses so downstream systems consume results safely</li>
-                                <li><strong>Cost governance:</strong> per-request AI usage and cost tracking built into the platform</li>
+                                <li><strong>Async job engine:</strong> FastAPI with ARQ/Redis workers; each service queues the work, returns a job ID at once, and streams staged progress over SSE with cancel and retry</li>
+                                <li><strong>Hybrid RAG on Qdrant:</strong> dense + sparse retrieval over legislation and framework libraries, scoped by jurisdiction and category, in separate collections so policy and framework text never mix</li>
+                                <li><strong>Document AI:</strong> Docling parsing of PDF/DOCX into chunked, embedded indexes, with stale chunks evicted when a document is replaced</li>
+                                <li><strong>Contract-first outputs:</strong> Pydantic-validated JSON per service against a written contract, so the backend can switch from mock to live with a config flag</li>
+                                <li><strong>Reproducibility &amp; evals:</strong> every scan records its prompt version, model, and engine build; an eval harness replays labelled cases to catch regressions</li>
+                                <li><strong>Cost governance:</strong> per-request token and cost tracking across models served through OpenRouter, attributed per school</li>
                             </ul>
                         </div>
                     </div>
                     <div class="project-tags">
-                        <span class="tag">RAG</span>
-                        <span class="tag">Document AI</span>
                         <span class="tag">FastAPI</span>
-                        <span class="tag">LLM Orchestration</span>
-                        <span class="tag">Structured Outputs</span>
+                        <span class="tag">Hybrid RAG</span>
+                        <span class="tag">Qdrant</span>
+                        <span class="tag">Document AI</span>
+                        <span class="tag">SSE Streaming</span>
+                        <span class="tag">LLM Evals</span>
                     </div>
                 </article>
 
