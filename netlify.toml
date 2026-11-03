@@ -6,7 +6,23 @@
   NODE_VERSION = "20"
 
 # /api/chat and /chat are routed by netlify/functions/chat.mjs via its own
-# `config.path` export, so they need no redirect here.
+# `config.path` export, so they need no redirect here. The same goes for
+# /api/content(.js) and /api/admin/* (content.mjs and admin.mjs).
+
+# The admin and content functions import data/content.json; esbuild inlines
+# it into the bundle so the defaults always ship with the function.
+[functions.admin]
+  node_bundler = "esbuild"
+
+[functions.content]
+  node_bundler = "esbuild"
+
+# The admin panel should never appear in search results
+[[headers]]
+  for = "/admin/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    X-Frame-Options = "DENY"
 
 [[redirects]]
   from = "/api/transcribe"

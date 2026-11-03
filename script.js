@@ -1,182 +1,251 @@
-// Mobile Navigation Toggle
+// ============ Motion & pointer preferences ============
+// The admin's "animations" switch turns motion off the same way the OS setting does
+const MOTION_OK = window.matchMedia('(prefers-reduced-motion: no-preference)').matches
+    && !document.documentElement.classList.contains('no-motion');
+const FINE_POINTER = window.matchMedia('(pointer: fine)').matches;
+const IS_MAC = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Show Ctrl instead of ⌘ for keyboard hints off Apple devices
+if (!IS_MAC) {
+    document.querySelectorAll('.kbd-mod').forEach((el) => {
+        el.textContent = 'Ctrl ';
+    });
+}
+
+// ============ Navigation ============
+const navbar = document.querySelector('.navbar');
 const hamburger = document.querySelector('.hamburger');
 const navMenu = document.querySelector('.nav-menu');
-const navLinks = document.querySelectorAll('.nav-link, .nav-cta');
 
-hamburger.addEventListener('click', () => {
-    navMenu.classList.toggle('active');
-    hamburger.classList.toggle('active');
+function setMenuOpen(open) {
+    navMenu.classList.toggle('active', open);
+    hamburger.classList.toggle('active', open);
+    hamburger.setAttribute('aria-expanded', String(open));
+    hamburger.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+}
+
+hamburger.addEventListener('click', () => setMenuOpen(!navMenu.classList.contains('active')));
+navMenu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenuOpen(false)));
+document.addEventListener('click', (e) => {
+    if (!e.target.closest('.nav-shell')) setMenuOpen(false);
 });
 
-// Close mobile menu when clicking on a link
-navLinks.forEach(link => {
-    link.addEventListener('click', () => {
-        navMenu.classList.remove('active');
-        hamburger.classList.remove('active');
-    });
-});
-
-// Smooth scrolling for navigation links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-    anchor.addEventListener('click', function (e) {
-        const target = document.querySelector(this.getAttribute('href'));
-        if (target) {
-            e.preventDefault();
-            const offsetTop = target.offsetTop - 70;
-            window.scrollTo({ top: offsetTop, behavior: 'smooth' });
-        }
-    });
-});
-
-// Scroll progress bar + back-to-top visibility
+// ============ Scroll: progress bar, nav shadow, back-to-top, active link ============
 const scrollProgress = document.getElementById('scrollProgress');
 const backToTop = document.getElementById('backToTop');
+const navSections = [...document.querySelectorAll('.nav-menu .nav-link')]
+    .map((link) => ({ link, section: document.querySelector(link.getAttribute('href')) }))
+    .filter(({ section }) => section);
 
-window.addEventListener('scroll', () => {
+let scrollTicking = false;
+function onScroll() {
+    scrollTicking = false;
     const scrollTop = window.scrollY;
     const docHeight = document.documentElement.scrollHeight - window.innerHeight;
     scrollProgress.style.width = (docHeight > 0 ? (scrollTop / docHeight) * 100 : 0) + '%';
-    backToTop.classList.toggle('visible', scrollTop > 500);
-});
+    backToTop.classList.toggle('visible', scrollTop > 600);
+    navbar.classList.toggle('scrolled', scrollTop > 20);
+
+    const probe = scrollTop + window.innerHeight * 0.35;
+    navSections.forEach(({ link, section }) => {
+        const inView = probe >= section.offsetTop && probe < section.offsetTop + section.offsetHeight;
+        link.classList.toggle('active', inView);
+    });
+}
+
+window.addEventListener('scroll', () => {
+    if (scrollTicking) return;
+    scrollTicking = true;
+    requestAnimationFrame(onScroll);
+}, { passive: true });
+onScroll();
 
 backToTop.addEventListener('click', () => {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    window.scrollTo({ top: 0, behavior: MOTION_OK ? 'smooth' : 'auto' });
 });
 
-// Active navigation link on scroll
-const sections = document.querySelectorAll('section[id]');
-
-function scrollActive() {
-    const scrollY = window.pageYOffset;
-
-    sections.forEach(current => {
-        const sectionHeight = current.offsetHeight;
-        const sectionTop = current.offsetTop - 100;
-        const sectionId = current.getAttribute('id');
-        const navLink = document.querySelector('.nav-menu a[href*=' + sectionId + ']');
-
-        if (scrollY > sectionTop && scrollY <= sectionTop + sectionHeight) {
-            navLink?.classList.add('active');
-        } else {
-            navLink?.classList.remove('active');
-        }
-    });
+function scrollToTarget(selector) {
+    const target = document.querySelector(selector);
+    target?.scrollIntoView({ behavior: MOTION_OK ? 'smooth' : 'auto', block: 'start' });
 }
 
-window.addEventListener('scroll', scrollActive);
+// ============ Theme ============
+const themeToggle = document.getElementById('themeToggle');
+const systemDark = window.matchMedia('(prefers-color-scheme: dark)');
 
-// Intersection Observer for scroll-in animations
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0) translateX(0)';
-            observer.unobserve(entry.target);
-        }
-    });
-}, { threshold: 0.1, rootMargin: '0px 0px -80px 0px' });
+function currentTheme() {
+    return document.documentElement.dataset.theme || (systemDark.matches ? 'dark' : 'light');
+}
 
-document.querySelectorAll('.skill-category, .project-card, .education-card, .featured-card, .contact-item').forEach((card, index) => {
-    card.style.opacity = '0';
-    card.style.transform = 'translateY(30px)';
-    card.style.transition = `opacity 0.6s ease ${(index % 4) * 0.08}s, transform 0.6s ease ${(index % 4) * 0.08}s`;
-    observer.observe(card);
-});
+function updateThemeLabel() {
+    themeToggle.setAttribute('aria-label', currentTheme() === 'dark' ? 'Switch to light theme' : 'Switch to dark theme');
+}
 
-document.querySelectorAll('.timeline-item').forEach((item, index) => {
-    item.style.opacity = '0';
-    item.style.transform = 'translateX(-30px)';
-    item.style.transition = `opacity 0.6s ease ${index * 0.15}s, transform 0.6s ease ${index * 0.15}s`;
-    observer.observe(item);
-});
-
-// Rotating typing effect for hero roles
-const roles = [
-    'agentic AI systems',
-    'RAG pipelines',
-    'LLM-powered products',
-    'document intelligence',
-    'production AI on AWS'
-];
-const typedRole = document.getElementById('typed-role');
-let roleIndex = 0;
-let charIndex = 0;
-let deleting = false;
-
-function typeLoop() {
-    const current = roles[roleIndex];
-
-    if (!deleting) {
-        typedRole.textContent = current.slice(0, ++charIndex);
-        if (charIndex === current.length) {
-            deleting = true;
-            setTimeout(typeLoop, 1800);
-            return;
-        }
-        setTimeout(typeLoop, 65);
-    } else {
-        typedRole.textContent = current.slice(0, --charIndex);
-        if (charIndex === 0) {
-            deleting = false;
-            roleIndex = (roleIndex + 1) % roles.length;
-        }
-        setTimeout(typeLoop, 32);
+function toggleTheme() {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.dataset.theme = next;
+    try {
+        localStorage.setItem('theme', next);
+    } catch (e) {
+        // Storage blocked (private mode): the choice lasts for this visit only
     }
+    updateThemeLabel();
 }
 
-window.addEventListener('load', () => {
-    typedRole.textContent = '';
-    charIndex = 0;
-    setTimeout(typeLoop, 600);
+themeToggle.addEventListener('click', toggleTheme);
+systemDark.addEventListener('change', updateThemeLabel);
+updateThemeLabel();
+
+// ============ Scroll reveal ============
+const revealEls = document.querySelectorAll('.reveal');
+
+// Stagger tiles that share a grid so a row arrives as a ripple, not a block
+document.querySelectorAll('.bento, .featured-list, .timeline, .edu-list').forEach((group) => {
+    [...group.children].forEach((child, i) => child.style.setProperty('--delay', `${(i % 4) * 70}ms`));
 });
 
-// Counter animation for stats
-const statNumbers = document.querySelectorAll('.stat-item h3');
-const statsObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            const target = entry.target;
-            const number = parseFloat(target.dataset.count || target.textContent);
-            const suffix = target.dataset.suffix || '';
+if ('IntersectionObserver' in window) {
+    const revealObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+                entry.target.classList.add('is-visible');
+                revealObserver.unobserve(entry.target);
+            }
+        });
+    }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+    revealEls.forEach((el) => revealObserver.observe(el));
+} else {
+    revealEls.forEach((el) => el.classList.add('is-visible'));
+}
 
-            let current = 0;
-            const increment = Math.max(number / 40, 0.5);
+// ============ Hero stat counters ============
+document.querySelectorAll('[data-count]').forEach((el) => {
+    const target = Number(el.dataset.count);
+    const suffix = el.dataset.suffix || '';
+    if (!MOTION_OK || !Number.isFinite(target)) return;
 
-            const updateCounter = () => {
-                current += increment;
-                if (current < number) {
-                    target.textContent = Math.floor(current) + suffix;
-                    requestAnimationFrame(updateCounter);
-                } else {
-                    target.textContent = number + suffix;
-                }
-            };
+    const duration = 1100;
+    const start = performance.now() + 500;
+    el.textContent = '0' + suffix;
+    (function tick(now) {
+        const t = Math.min(Math.max((now - start) / duration, 0), 1);
+        const eased = 1 - Math.pow(1 - t, 3);
+        el.textContent = Math.round(eased * target) + suffix;
+        if (t < 1) requestAnimationFrame(tick);
+    })(performance.now());
+});
 
-            updateCounter();
-            statsObserver.unobserve(target);
-        }
+// ============ Cursor glow on tiles and project cards ============
+if (FINE_POINTER && !document.documentElement.classList.contains('no-glow')) {
+    document.querySelectorAll('.tile, .featured-card').forEach((card) => {
+        card.addEventListener('pointermove', (e) => {
+            const rect = card.getBoundingClientRect();
+            card.style.setProperty('--mx', `${e.clientX - rect.left}px`);
+            card.style.setProperty('--my', `${e.clientY - rect.top}px`);
+        });
     });
-}, { threshold: 0.5 });
+}
 
-statNumbers.forEach(stat => statsObserver.observe(stat));
+// ============ Tech marquee: duplicate the track so the loop is seamless ============
+if (MOTION_OK) {
+    document.querySelectorAll('.marquee-track').forEach((track) => {
+        [...track.children].forEach((item) => {
+            const clone = item.cloneNode(true);
+            clone.setAttribute('aria-hidden', 'true');
+            track.appendChild(clone);
+        });
+    });
+}
 
-// Business / Technical view toggles on featured project cards
-document.querySelectorAll('.featured-card').forEach(card => {
+// ============ Hero agent demo ============
+// Scripted runs of the kind of pipeline each production platform uses,
+// edited in the admin under Profile → Hero agent demo.
+const DEMO_RUNS = (SITE_DATA.demo || [])
+    .filter((run) => run && run.query)
+    .map((run) => ({ ...run, steps: (run.steps || []).filter(Boolean).slice(0, 5) }));
+
+const toSlug = (value) => String(value ?? '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
+
+(function initAgentDemo() {
+    const demo = document.querySelector('.agent-demo');
+    if (!demo || !DEMO_RUNS.length) return;
+    const projectEl = document.getElementById('demoProject');
+    const queryEl = document.getElementById('demoQuery');
+    const answerEl = document.getElementById('demoAnswer');
+    const stepEls = [...document.querySelectorAll('#demoSteps li')];
+
+    function paint(run, { typed = run.query.length, doneUpTo = -1, active = -1, answer = false, timings = [] } = {}) {
+        demo.dataset.tone = run.tone;
+        projectEl.textContent = run.project;
+        queryEl.textContent = run.query.slice(0, typed);
+        stepEls.forEach((li, i) => {
+            const label = (run.steps || [])[i] || '';
+            li.hidden = !label;
+            li.querySelector('.step-label').textContent = label;
+            li.classList.toggle('done', i <= doneUpTo);
+            li.classList.toggle('active', i === active);
+            li.querySelector('.step-ms').textContent = i <= doneUpTo && timings[i] ? `${timings[i]}ms` : '';
+        });
+        answerEl.textContent = run.answer;
+        answerEl.classList.toggle('visible', answer);
+    }
+
+    if (!MOTION_OK) {
+        paint(DEMO_RUNS[0], { doneUpTo: stepEls.length - 1, answer: true, timings: [38, 212, 164, 9, 640] });
+        return;
+    }
+
+    let heroVisible = true;
+    new IntersectionObserver(([entry]) => {
+        heroVisible = entry.isIntersecting;
+    }).observe(demo);
+    const whenVisible = async () => {
+        while (!heroVisible || document.hidden) await sleep(400);
+    };
+
+    (async function loop() {
+        for (let r = 0; ; r = (r + 1) % DEMO_RUNS.length) {
+            const run = DEMO_RUNS[r];
+            const timings = (run.steps || []).map((_, i) => (i === run.steps.length - 1 ? 500 + Math.round(Math.random() * 400) : 20 + Math.round(Math.random() * 260)));
+            await whenVisible();
+            for (let c = 0; c <= run.query.length; c++) {
+                paint(run, { typed: c });
+                await sleep(28);
+            }
+            await sleep(350);
+            for (let s = 0; s < run.steps.length; s++) {
+                await whenVisible();
+                paint(run, { doneUpTo: s - 1, active: s, timings });
+                await sleep(520);
+            }
+            paint(run, { doneUpTo: run.steps.length - 1, answer: true, timings });
+            await sleep(3600);
+        }
+    })();
+})();
+
+// ============ Business / technical view toggles ============
+document.querySelectorAll('.featured-card').forEach((card) => {
     const buttons = card.querySelectorAll('.view-btn');
     const panes = card.querySelectorAll('.view-pane');
 
-    buttons.forEach(btn => {
+    buttons.forEach((btn) => {
         btn.addEventListener('click', () => {
             const view = btn.dataset.view;
-            buttons.forEach(b => b.classList.toggle('active', b === btn));
-            panes.forEach(p => p.classList.toggle('active', p.dataset.pane === view));
+            buttons.forEach((b) => {
+                b.classList.toggle('active', b === btn);
+                b.setAttribute('aria-selected', String(b === btn));
+            });
+            panes.forEach((p) => p.classList.toggle('active', p.dataset.pane === view));
         });
     });
 });
 
-// Contact form → opens the visitor's email client pre-filled
+// ============ Contact ============
 const contactForm = document.getElementById('contactForm');
-contactForm.addEventListener('submit', (e) => {
+contactForm?.addEventListener('submit', (e) => {
     e.preventDefault();
 
     const name = document.getElementById('cf-name').value.trim();
@@ -185,76 +254,164 @@ contactForm.addEventListener('submit', (e) => {
     const message = document.getElementById('cf-message').value.trim();
 
     const body = `${message}\n\n— ${name} (${email})`;
-    const mailto = `mailto:prajapatipareshkumar1032@gmail.com?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+    const mailto = `mailto:${contactForm.dataset.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 
     window.location.href = mailto;
     contactForm.reset();
 });
 
-// ============ Motion preferences ============
-const MOTION_OK = window.matchMedia('(prefers-reduced-motion: no-preference)').matches;
-const FINE_POINTER = window.matchMedia('(pointer: fine)').matches;
+const copyEmailBtn = document.getElementById('copyEmail');
 
-const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+async function copyEmail() {
+    if (!copyEmailBtn) return;
+    const email = copyEmailBtn.dataset.email;
+    const label = copyEmailBtn.querySelector('.copy-label');
+    try {
+        await navigator.clipboard.writeText(email);
+        label.textContent = 'Copied!';
+    } catch (e) {
+        // Clipboard unavailable (insecure context or denied): fall back to the mail app
+        window.location.href = `mailto:${email}`;
+        return;
+    }
+    setTimeout(() => {
+        label.textContent = 'Copy';
+    }, 2000);
+}
 
-// ============ Cursor spotlight on the hero grid ============
-(function initHeroSpotlight() {
-    const hero = document.querySelector('.hero');
-    const spotlight = document.getElementById('heroSpotlight');
-    if (!hero || !spotlight || !MOTION_OK || !FINE_POINTER) return;
+copyEmailBtn?.addEventListener('click', copyEmail);
 
-    let pending = false;
-    hero.addEventListener('mousemove', (e) => {
-        if (pending) return;
-        pending = true;
-        requestAnimationFrame(() => {
-            const rect = hero.getBoundingClientRect();
-            spotlight.style.transform = `translate(${e.clientX - rect.left}px, ${e.clientY - rect.top}px)`;
-            pending = false;
+// ============ Command palette (⌘K / Ctrl+K) ============
+const cmdkOverlay = document.getElementById('cmdk');
+const cmdkInput = document.getElementById('cmdkInput');
+const cmdkList = document.getElementById('cmdkList');
+const cmdkOpenBtn = document.getElementById('cmdkOpen');
+let cmdkActive = 0;
+let cmdkVisible = [];
+let cmdkReturnFocus = null;
+
+const SECTION_ICONS = {
+    about: 'fas fa-user',
+    skills: 'fas fa-toolbox',
+    experience: 'fas fa-briefcase',
+    projects: 'fas fa-layer-group',
+    education: 'fas fa-graduation-cap',
+    contact: 'fas fa-envelope'
+};
+
+// Built from what was actually rendered, so hidden sections and projects
+// edited in the admin never leave dead entries behind.
+const CMDK_ITEMS = [
+    ...[...document.querySelectorAll('.nav-menu .nav-link')].map((link) => {
+        const id = link.getAttribute('href').slice(1);
+        return { group: 'Sections', label: link.textContent, icon: SECTION_ICONS[id] || 'fas fa-hashtag', keywords: id, run: () => scrollToTarget(`#${id}`) };
+    }),
+    ...[...(SITE_DATA.projects?.featured || []), ...(SITE_DATA.projects?.more || [])]
+        .filter((pr) => document.getElementById(toSlug(pr.id || pr.name)))
+        .map((pr) => ({ group: 'Projects', label: pr.name, hint: pr.tagline, icon: pr.icon || 'fas fa-folder', run: () => scrollToTarget(`#${toSlug(pr.id || pr.name)}`) })),
+    { group: 'Actions', label: 'Ask my AI assistant', icon: 'fas fa-wand-magic-sparkles', keywords: 'chat bot question', run: () => openChat() },
+    ...(document.querySelector('[data-resume]') ? [{ group: 'Actions', label: 'Download resume', icon: 'fas fa-file-arrow-down', keywords: 'cv pdf', run: () => document.querySelector('[data-resume]').click() }] : []),
+    ...(copyEmailBtn ? [{ group: 'Actions', label: 'Copy email address', icon: 'fas fa-copy', keywords: 'contact mail', run: () => copyEmail() }] : []),
+    { group: 'Actions', label: 'Switch light / dark theme', icon: 'fas fa-circle-half-stroke', keywords: 'theme mode colour color', run: () => toggleTheme() },
+    { group: 'Actions', label: 'Open terminal', icon: 'fas fa-terminal', keywords: 'shell easter egg', run: () => openTerminal() },
+    ...(SITE_DATA.profile?.github ? [{ group: 'Links', label: 'GitHub', icon: 'fab fa-github', run: () => window.open(SITE_DATA.profile.github, '_blank', 'noopener') }] : []),
+    ...(SITE_DATA.profile?.linkedin ? [{ group: 'Links', label: 'LinkedIn', icon: 'fab fa-linkedin-in', run: () => window.open(SITE_DATA.profile.linkedin, '_blank', 'noopener') }] : [])
+];
+
+function renderCmdk() {
+    const q = cmdkInput.value.trim().toLowerCase();
+    cmdkVisible = CMDK_ITEMS.filter((item) => !q || `${item.label} ${item.hint || ''} ${item.keywords || ''} ${item.group}`.toLowerCase().includes(q));
+    cmdkActive = Math.min(cmdkActive, Math.max(cmdkVisible.length - 1, 0));
+    cmdkList.innerHTML = '';
+
+    if (!cmdkVisible.length) {
+        cmdkList.innerHTML = '<li class="cmdk-empty">No matches — try “projects” or “resume”.</li>';
+        cmdkInput.removeAttribute('aria-activedescendant');
+        return;
+    }
+
+    let lastGroup = '';
+    cmdkVisible.forEach((item, i) => {
+        if (item.group !== lastGroup) {
+            lastGroup = item.group;
+            const heading = document.createElement('li');
+            heading.className = 'cmdk-group';
+            heading.setAttribute('role', 'presentation');
+            heading.textContent = item.group;
+            cmdkList.appendChild(heading);
+        }
+        const li = document.createElement('li');
+        li.className = 'cmdk-item' + (i === cmdkActive ? ' active' : '');
+        li.id = `cmdk-item-${i}`;
+        li.setAttribute('role', 'option');
+        li.setAttribute('aria-selected', String(i === cmdkActive));
+        li.innerHTML = `<i class="${item.icon.replace(/[^a-z0-9 -]/gi, '')}"></i><span></span>${item.hint ? '<span class="cmdk-hint"></span>' : ''}`;
+        li.querySelector('span').textContent = item.label;
+        if (item.hint) li.querySelector('.cmdk-hint').textContent = item.hint;
+        li.addEventListener('mousemove', () => {
+            if (cmdkActive !== i) {
+                cmdkActive = i;
+                renderCmdk();
+            }
         });
+        li.addEventListener('click', () => runCmdk(i));
+        cmdkList.appendChild(li);
     });
-})();
+    cmdkInput.setAttribute('aria-activedescendant', `cmdk-item-${cmdkActive}`);
+    document.getElementById(`cmdk-item-${cmdkActive}`)?.scrollIntoView({ block: 'nearest' });
+}
 
-// ============ Magnetic hover on buttons ============
-(function initMagneticButtons() {
-    if (!MOTION_OK || !FINE_POINTER) return;
+function openCmdk() {
+    cmdkReturnFocus = document.activeElement;
+    cmdkOverlay.hidden = false;
+    cmdkInput.value = '';
+    cmdkActive = 0;
+    renderCmdk();
+    cmdkInput.focus();
+}
 
-    document.querySelectorAll('.btn').forEach((btn) => {
-        btn.addEventListener('mousemove', (e) => {
-            const rect = btn.getBoundingClientRect();
-            const dx = e.clientX - (rect.left + rect.width / 2);
-            const dy = e.clientY - (rect.top + rect.height / 2);
-            const pull = 0.18;
-            const x = Math.max(-6, Math.min(6, dx * pull));
-            const y = Math.max(-4, Math.min(4, dy * pull));
-            btn.style.transform = `translate(${x}px, ${y - 2}px)`;
-        });
-        btn.addEventListener('mouseleave', () => {
-            btn.style.transform = '';
-        });
-    });
-})();
+function closeCmdk() {
+    cmdkOverlay.hidden = true;
+    cmdkReturnFocus?.focus?.();
+}
 
-// ============ Subtle 3D tilt on cards ============
-(function initCardTilt() {
-    if (!MOTION_OK || !FINE_POINTER) return;
+function runCmdk(index) {
+    const item = cmdkVisible[index];
+    if (!item) return;
+    closeCmdk();
+    item.run();
+}
 
-    document.querySelectorAll('.project-card, .skill-category').forEach((card) => {
-        card.addEventListener('mouseenter', () => {
-            card.style.transition = 'transform 0.12s ease-out';
-        });
-        card.addEventListener('mousemove', (e) => {
-            const rect = card.getBoundingClientRect();
-            const px = (e.clientX - rect.left) / rect.width - 0.5;
-            const py = (e.clientY - rect.top) / rect.height - 0.5;
-            card.style.transform = `perspective(700px) rotateX(${(-py * 6).toFixed(2)}deg) rotateY(${(px * 6).toFixed(2)}deg) translateY(-4px)`;
-        });
-        card.addEventListener('mouseleave', () => {
-            card.style.transition = 'transform 0.35s ease';
-            card.style.transform = '';
-        });
-    });
-})();
+cmdkOpenBtn.addEventListener('click', openCmdk);
+cmdkInput.addEventListener('input', () => {
+    cmdkActive = 0;
+    renderCmdk();
+});
+cmdkInput.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const step = e.key === 'ArrowDown' ? 1 : -1;
+        cmdkActive = (cmdkActive + step + cmdkVisible.length) % Math.max(cmdkVisible.length, 1);
+        renderCmdk();
+    } else if (e.key === 'Enter') {
+        e.preventDefault();
+        runCmdk(cmdkActive);
+    } else if (e.key === 'Escape') {
+        closeCmdk();
+    } else if (e.key === 'Tab') {
+        e.preventDefault(); // keep focus inside the dialog
+    }
+});
+cmdkOverlay.addEventListener('click', (e) => {
+    if (e.target === cmdkOverlay) closeCmdk();
+});
+document.addEventListener('keydown', (e) => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        if (cmdkOverlay.hidden) openCmdk();
+        else closeCmdk();
+    }
+});
 
 // ============ Terminal Easter Egg ============
 const terminalOverlay = document.getElementById('terminal-overlay');
@@ -315,7 +472,7 @@ document intelligence — on AWS with LangChain/LangGraph + FastAPI.</span>`);
         terminalPrint(`<span class="t-ok">●</span> <span class="t-accent">CaterNest</span>    AI catering marketplace — LangGraph agent, Bedrock, OpenSearch
 <span class="t-ok">●</span> <span class="t-accent">PolicyGuard</span>  school compliance &amp; safeguarding — hybrid RAG, async AI jobs
 <span class="t-ok">●</span> <span class="t-accent">IsleWay</span>      AI travel companion — FastAPI agentic chat
-<span class="t-muted">  + ClauseLens, AskHR, MatchMind, QueryMind</span>
+<span class="t-muted">  + FinScribe, CarePilot, AthleteIQ, MenuForge, ClauseLens, AskHR, MatchMind, QueryMind</span>
 <span class="t-muted">Scroll to the Projects section for the full deep-dives.</span>`);
     },
     contact() {
@@ -1011,6 +1168,20 @@ sendBtn.addEventListener('click', sendMessage);
 chatInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') sendMessage();
 });
+
+// ---- Entry points into the chat from the page ----
+function openChat(question) {
+    chatContainer.classList.remove('hidden');
+    if (question) {
+        chatInput.value = question;
+        sendMessage();
+    } else {
+        chatInput.focus();
+    }
+}
+
+document.querySelectorAll('[data-open-chat]').forEach((btn) => btn.addEventListener('click', () => openChat()));
+document.querySelectorAll('[data-ask]').forEach((chip) => chip.addEventListener('click', () => openChat(chip.dataset.ask)));
 
 // Console message for developers
 console.log('%c👋 Welcome to Paresh Prajapati\'s Portfolio!', 'color: #818cf8; font-size: 20px; font-weight: bold;');

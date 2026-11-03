@@ -8,608 +8,148 @@
     <meta property="og:title" content="Paresh Prajapati — AI/ML Engineer">
     <meta property="og:description" content="Building production AI platforms: agentic assistants, RAG pipelines, and document intelligence systems.">
     <meta property="og:type" content="website">
+    <meta property="og:image" content="">
+    <meta name="keywords" content="">
+    <link rel="canonical" href="">
+    <meta name="color-scheme" content="light dark">
+    <meta name="theme-color" content="#f7f6f2" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#0b0d12" media="(prefers-color-scheme: dark)">
+    <!-- Apply the saved theme before first paint so the page never flashes the wrong one -->
+    <script>
+        (function () {
+            document.documentElement.classList.add('js');
+            try {
+                var saved = localStorage.getItem('theme');
+                if (saved === 'light' || saved === 'dark') document.documentElement.dataset.theme = saved;
+            } catch (e) { /* storage blocked: follow the system setting */ }
+        })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Sora:wght@600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="widgets.css">
     <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked@15.0.12/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.4.15/dist/purify.min.js"></script>
+    <!-- Published content from the admin panel; render.js falls back to data/content.json -->
+    <script src="/api/content.js"></script>
 </head>
 <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+
     <!-- Scroll progress bar -->
     <div class="scroll-progress" id="scrollProgress"></div>
 
     <!-- Navigation -->
-    <nav class="navbar">
-        <div class="container">
-            <a href="#home" class="nav-brand">Paresh<span class="brand-dot">.</span></a>
-            <ul class="nav-menu">
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#skills" class="nav-link">Skills</a></li>
-                <li><a href="#experience" class="nav-link">Experience</a></li>
-                <li><a href="#projects" class="nav-link">Projects</a></li>
-                <li><a href="#education" class="nav-link">Education</a></li>
-                <li><a href="#contact" class="nav-cta">Hire Me</a></li>
-            </ul>
-            <div class="hamburger" aria-label="Menu">
-                <span></span>
-                <span></span>
-                <span></span>
+    <header class="navbar">
+        <nav class="nav-shell" aria-label="Main">
+            <a href="#home" class="nav-brand" aria-label="Paresh Prajapati — home">
+                <span class="brand-mark"></span>
+                <span class="brand-name"></span>
+            </a>
+            <ul class="nav-menu" id="navMenu"></ul>
+            <div class="nav-actions">
+                <button class="icon-btn cmdk-trigger" id="cmdkOpen" type="button" aria-label="Open quick search">
+                    <i class="fas fa-magnifying-glass"></i>
+                    <kbd class="kbd-hint"><span class="kbd-mod">⌘</span>K</kbd>
+                </button>
+                <button class="icon-btn" id="themeToggle" type="button" aria-label="Switch colour theme">
+                    <i class="fas fa-moon theme-icon-dark"></i>
+                    <i class="fas fa-sun theme-icon-light"></i>
+                </button>
+                <a href="#contact" class="nav-cta">Hire me</a>
+                <button class="hamburger" type="button" aria-label="Open menu" aria-expanded="false" aria-controls="navMenu">
+                    <span></span>
+                    <span></span>
+                </button>
             </div>
-        </div>
-    </nav>
+        </nav>
+    </header>
 
-    <!-- Hero Section -->
-    <section id="home" class="hero">
-        <div class="hero-bg" aria-hidden="true">
-            <div class="hero-grid"></div>
-            <div class="hero-glow hero-glow-1"></div>
-            <div class="hero-glow hero-glow-2"></div>
-            <div class="hero-spotlight" id="heroSpotlight"></div>
-        </div>
-        <div class="container hero-inner">
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span class="badge-pulse"></span>
-                    Open to AI/ML opportunities
-                </div>
-                <h1 class="hero-title">Hi, I'm <span class="highlight">Paresh Prajapati</span></h1>
-                <h2 class="hero-subtitle">I build <span id="typed-role" class="typed-role">agentic AI systems</span><span class="typed-cursor">|</span></h2>
-                <p class="hero-description">
-                    AI/ML Engineer with 3+ years shipping production Generative AI —
-                    conversational agents, RAG pipelines, and document intelligence
-                    platforms that solve real business problems.
-                </p>
-                <div class="hero-buttons">
-                    <a href="#projects" class="btn btn-primary"><i class="fas fa-rocket"></i> View Projects</a>
-                    <a href="#contact" class="btn btn-secondary"><i class="fas fa-paper-plane"></i> Get In Touch</a>
-                    <a href="Paresh_Prajapati_Resume.pdf" download="Paresh_Prajapati_Resume.pdf" class="btn btn-ghost">
-                        <i class="fas fa-download"></i> Resume
-                    </a>
-                </div>
-                <div class="social-links">
-                    <a href="https://github.com/paresh-112" title="GitHub" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
-                    <a href="https://www.linkedin.com/in/paresh-prajapati-00a5b7243" title="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="mailto:prajapatipareshkumar1032@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
-                    <a href="tel:+918849581032" title="Phone"><i class="fas fa-phone"></i></a>
-                </div>
+    <noscript><p class="load-error">This portfolio needs JavaScript to show its content. You can still <a href="Paresh_Prajapati_Resume.pdf">download the resume</a>.</p></noscript>
+
+    <main id="main">
+        <!-- Hero -->
+        <section id="home" class="hero">
+            <div class="hero-bg" aria-hidden="true">
+                <div class="hero-dots"></div>
+                <div class="blob blob-1"></div>
+                <div class="blob blob-2"></div>
+                <div class="blob blob-3"></div>
             </div>
-            <div class="hero-visual">
-                <div class="terminal-card" id="heroTerminal" role="button" tabindex="0" title="Click to open the interactive terminal">
-                    <div class="terminal-header">
-                        <span class="t-dot t-red"></span>
-                        <span class="t-dot t-yellow"></span>
-                        <span class="t-dot t-green"></span>
-                        <span class="terminal-title">agent.py</span>
-                    </div>
-                    <pre class="terminal-body"><code><span class="c-kw">from</span> langgraph.graph <span class="c-kw">import</span> StateGraph
 
-<span class="c-fn">agent</span> = StateGraph(AssistantState)
-agent.add_node(<span class="c-str">"understand"</span>, parse_intent)
-agent.add_node(<span class="c-str">"search"</span>, semantic_search)
-agent.add_node(<span class="c-str">"respond"</span>, stream_reply)
+            <div class="container hero-inner">
+                <div class="hero-copy" id="heroCopy"></div>
 
-<span class="c-cm"># production: memory + guardrails</span>
-app = agent.compile(
-    checkpointer=postgres_saver,
-    pii_filter=<span class="c-kw">True</span>,
-)</code></pre>
-                    <div class="terminal-status">
-                        <span class="status-ok"><i class="fas fa-circle-check"></i> deployed</span>
-                        <span class="status-env">aws · fargate</span>
+                <!-- Signature moment: a live agent run that mirrors how Paresh's systems work -->
+                <div class="agent-demo" aria-label="Animated example of an AI agent answering a question">
+                    <div class="demo-head">
+                        <span class="demo-title"><i class="fas fa-diagram-project"></i> agent run</span>
+                        <span class="demo-project" id="demoProject"></span>
                     </div>
-                </div>
-                <p class="terminal-hint"><i class="fas fa-terminal"></i> click to interact — or press <kbd>~</kbd></p>
-            </div>
-        </div>
-        <a href="#about" class="scroll-hint" aria-label="Scroll down"><i class="fas fa-chevron-down"></i></a>
-    </section>
-
-    <!-- About Section -->
-    <section id="about" class="about section">
-        <div class="container">
-            <p class="section-eyebrow">Who I am</p>
-            <h2 class="section-title">About Me</h2>
-            <div class="about-content">
-                <div class="about-text">
-                    <p>
-                        I'm an AI/ML Engineer specializing in <strong>Generative AI and agentic systems</strong>.
-                        Over the last 3+ years I've taken AI products from whiteboard to production —
-                        designing multi-agent architectures, building RAG pipelines over real business data,
-                        and deploying them on AWS infrastructure that serves live users.
-                    </p>
-                    <p>
-                        My recent work spans three production platforms: an <strong>AI-powered catering
-                        marketplace</strong> with a conversational ordering assistant and automated menu
-                        digitization, a <strong>compliance and safeguarding engine</strong> that automates policy,
-                        incident, and risk workflows for schools, and an <strong>AI travel companion</strong>
-                        for a tourism platform.
-                    </p>
-                    <p>
-                        I care about the full picture: not just model quality, but cost efficiency, latency,
-                        data privacy, and whether the feature actually moves the business. Python, FastAPI,
-                        LangChain/LangGraph, and AWS are my daily tools.
-                    </p>
-                </div>
-                <div class="about-stats">
-                    <div class="stat-item">
-                        <h3 data-count="3" data-suffix="+">3+</h3>
-                        <p>Years Experience</p>
+                    <div class="demo-query">
+                        <span class="demo-prompt">&gt;</span>
+                        <span id="demoQuery"></span><span class="demo-caret" aria-hidden="true"></span>
                     </div>
-                    <div class="stat-item">
-                        <h3 data-count="7" data-suffix="+">7+</h3>
-                        <p>AI Projects Delivered</p>
-                    </div>
-                    <div class="stat-item">
-                        <h3 data-count="3" data-suffix="">3</h3>
-                        <p>Production AI Platforms</p>
+                    <ol class="demo-steps" id="demoSteps"></ol>
+                    <p class="demo-answer" id="demoAnswer"></p>
+                    <div class="demo-foot">
+                        <span><i class="fas fa-circle-check"></i> deployed</span>
+                        <button type="button" class="demo-terminal" id="heroTerminal" title="Open the interactive terminal">
+                            <i class="fas fa-terminal"></i> open terminal <kbd>~</kbd>
+                        </button>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Skills Section -->
-    <section id="skills" class="skills section">
-        <div class="container">
-            <p class="section-eyebrow">My toolbox</p>
-            <h2 class="section-title">Technical Skills</h2>
-            <div class="skills-grid">
-                <div class="skill-category">
-                    <div class="category-icon"><i class="fas fa-robot"></i></div>
-                    <h3>GenAI &amp; Agents</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">LLMs</span>
-                        <span class="skill-tag">RAG</span>
-                        <span class="skill-tag">LangChain</span>
-                        <span class="skill-tag">LangGraph</span>
-                        <span class="skill-tag">Agentic AI</span>
-                        <span class="skill-tag">Prompt Engineering</span>
-                        <span class="skill-tag">NLP</span>
-                        <span class="skill-tag">Vector Search</span>
-                        <span class="skill-tag">Hybrid RAG</span>
-                        <span class="skill-tag">Text-to-SQL</span>
-                        <span class="skill-tag">Structured Outputs</span>
-                        <span class="skill-tag">LLM Evals</span>
-                    </div>
-                </div>
-
-                <div class="skill-category">
-                    <div class="category-icon"><i class="fas fa-code"></i></div>
-                    <h3>Languages &amp; Backends</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Python</span>
-                        <span class="skill-tag">FastAPI</span>
-                        <span class="skill-tag">Django</span>
-                        <span class="skill-tag">Flask</span>
-                        <span class="skill-tag">REST APIs</span>
-                        <span class="skill-tag">SSE Streaming</span>
-                        <span class="skill-tag">ARQ / Redis Queues</span>
-                        <span class="skill-tag">SQLAlchemy</span>
-                        <span class="skill-tag">pytest</span>
-                    </div>
-                </div>
-
-                <div class="skill-category">
-                    <div class="category-icon"><i class="fas fa-cloud"></i></div>
-                    <h3>Cloud &amp; Data</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">AWS Bedrock</span>
-                        <span class="skill-tag">ECS Fargate</span>
-                        <span class="skill-tag">Textract</span>
-                        <span class="skill-tag">OpenSearch</span>
-                        <span class="skill-tag">PostgreSQL</span>
-                        <span class="skill-tag">Redis</span>
-                        <span class="skill-tag">Docker</span>
-                        <span class="skill-tag">Qdrant</span>
-                        <span class="skill-tag">MySQL</span>
-                        <span class="skill-tag">MongoDB</span>
-                        <span class="skill-tag">OpenRouter</span>
-                    </div>
-                </div>
-
-                <div class="skill-category">
-                    <div class="category-icon"><i class="fas fa-brain"></i></div>
-                    <h3>ML Libraries</h3>
-                    <div class="skill-tags">
-                        <span class="skill-tag">Pandas</span>
-                        <span class="skill-tag">NumPy</span>
-                        <span class="skill-tag">TensorFlow</span>
-                        <span class="skill-tag">Scikit-learn</span>
-                        <span class="skill-tag">Hugging Face</span>
-                        <span class="skill-tag">QLoRA</span>
-                        <span class="skill-tag">Docling</span>
-                        <span class="skill-tag">AssemblyAI</span>
-                    </div>
-                </div>
+        <!-- Tech marquee -->
+        <section class="marquee-band" aria-label="Technologies I work with">
+            <div class="marquee" data-marquee>
+                <ul class="marquee-track"></ul>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- Experience Section -->
-    <section id="experience" class="experience section">
-        <div class="container">
-            <p class="section-eyebrow">Where I've been</p>
-            <h2 class="section-title">Experience</h2>
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">Feb 2026 – Present</div>
-                        <h3>AI Engineer — Encodedots</h3>
-                        <ul>
-                            <li>Own end-to-end AI solution development — from system design and agent architecture to deployment and monitoring on AWS</li>
-                            <li>Design scalable multi-agent workflows (LangGraph) powering conversational assistants, semantic search, and document intelligence in production</li>
-                            <li>Drive cost efficiency across LLM workloads: model selection, caching strategies, token-usage tracking, and streaming architectures</li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="timeline-item">
-                    <div class="timeline-dot"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-date">Feb 2023 – Oct 2025</div>
-                        <h3>Software Engineer (AI/ML)</h3>
-                        <ul>
-                            <li>Built and shipped AI/ML solutions that optimized operational processes — RAG frameworks, LLM integrations, and NLP pipelines</li>
-                            <li>Collaborated across all project stages, from problem definition and data preparation to model evaluation and delivery</li>
-                            <li>Developed production chatbots, document-analysis systems, and recommendation engines used by real clients</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Featured Projects Section -->
-    <section id="projects" class="projects section">
-        <div class="container">
-            <p class="section-eyebrow">What I've shipped</p>
-            <h2 class="section-title">Featured Projects</h2>
-            <p class="section-subtitle">
-                Production platforms where I built the AI layer — each shown from two angles:
-                the business problem it solves and how it works under the hood.
-            </p>
-
-            <div class="featured-list">
-                <!-- CaterNest -->
-                <article class="featured-card">
-                    <div class="featured-header">
-                        <div class="featured-icon"><i class="fas fa-utensils"></i></div>
-                        <div>
-                            <h3>CaterNest</h3>
-                            <p class="featured-tagline">AI-Powered Catering Marketplace</p>
-                        </div>
-                        <span class="featured-status">In Production</span>
-                    </div>
-                    <div class="view-toggle" role="tablist">
-                        <button class="view-btn active" data-view="business" role="tab"><i class="fas fa-briefcase"></i> Business Impact</button>
-                        <button class="view-btn" data-view="technical" role="tab"><i class="fas fa-microchip"></i> Technical Deep-Dive</button>
-                    </div>
-                    <div class="view-panes">
-                        <div class="view-pane active" data-pane="business">
-                            <p>
-                                A marketplace connecting businesses with caterers — where ordering used to mean
-                                phone calls and PDF menus. I built the AI layer that removes that friction on both sides.
-                            </p>
-                            <ul>
-                                <li><strong>Conversational ordering:</strong> customers describe what they need in plain English — the assistant finds matching caterers, browses menus, and helps assemble orders</li>
-                                <li><strong>Menu digitization in minutes:</strong> caterers upload a PDF or photo of their menu and it becomes a structured, searchable listing — replacing hours of manual data entry per vendor</li>
-                                <li><strong>Faster supply onboarding + natural-language discovery</strong> — lowering the barrier for vendors to join and for buyers to find them</li>
-                            </ul>
-                        </div>
-                        <div class="view-pane" data-pane="technical">
-                            <ul>
-                                <li><strong>Agent orchestration:</strong> LangGraph multi-step agent on AWS Bedrock (Claude), with tool-calling into search, menus, and order context</li>
-                                <li><strong>Semantic search:</strong> hybrid keyword + vector retrieval over OpenSearch indices for caterers, menus, and packages</li>
-                                <li><strong>Persistent memory:</strong> LangGraph PostgreSQL checkpointer so conversations survive across sessions</li>
-                                <li><strong>PII-safe streaming:</strong> server-sent-event token streaming with personal data filtered before it reaches the client</li>
-                                <li><strong>Menu extraction pipeline:</strong> AWS Textract OCR + LLM structuring converts raw menu documents into normalized catalog data</li>
-                                <li><strong>Infra:</strong> containerized services on ECS Fargate, Redis caching, IAM-scoped access</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="project-tags">
-                        <span class="tag">LangGraph</span>
-                        <span class="tag">AWS Bedrock</span>
-                        <span class="tag">OpenSearch</span>
-                        <span class="tag">PostgreSQL</span>
-                        <span class="tag">Textract</span>
-                        <span class="tag">ECS Fargate</span>
-                    </div>
-                </article>
-
-                <!-- PolicyGuard -->
-                <article class="featured-card">
-                    <div class="featured-header">
-                        <div class="featured-icon"><i class="fas fa-shield-halved"></i></div>
-                        <div>
-                            <h3>PolicyGuard</h3>
-                            <p class="featured-tagline">AI Compliance &amp; Safeguarding Engine for Schools</p>
-                        </div>
-                        <span class="featured-status">In Production</span>
-                    </div>
-                    <div class="view-toggle" role="tablist">
-                        <button class="view-btn active" data-view="business" role="tab"><i class="fas fa-briefcase"></i> Business Impact</button>
-                        <button class="view-btn" data-view="technical" role="tab"><i class="fas fa-microchip"></i> Technical Deep-Dive</button>
-                    </div>
-                    <div class="view-panes">
-                        <div class="view-pane active" data-pane="business">
-                            <p>
-                                A safeguarding and compliance platform for schools, where policy reviews, incident
-                                reporting, and supplier checks are slow, manual, and high-stakes. I built the AI engine
-                                behind it: a suite of services that scans, rewrites, and triages in minutes, while a
-                                person still signs off on every decision that matters.
-                            </p>
-                            <ul>
-                                <li><strong>Policy compliance scans:</strong> scores a school's policies against the current legislation register, lists the gaps, rewrites the policy to close them, and suggests refresher training for staff</li>
-                                <li><strong>Incident &amp; complaint triage:</strong> classifies seriousness from the free-text report and proposes the right escalation and statutory deadline, built to escalate when in doubt and never to downgrade on its own</li>
-                                <li><strong>Risk &amp; verification:</strong> excursion risk assessments, supplier certificate checks, CV parsing with candidate briefings, and audits of a school's public online exposure</li>
-                                <li><strong>AI tool safety scanner:</strong> grades AI tools a school wants to adopt against published AI-in-education frameworks, with evidence for each finding</li>
-                            </ul>
-                        </div>
-                        <div class="view-pane" data-pane="technical">
-                            <ul>
-                                <li><strong>Async job engine:</strong> FastAPI with ARQ/Redis workers; each service queues the work, returns a job ID at once, and streams staged progress over SSE with cancel and retry</li>
-                                <li><strong>Hybrid RAG on Qdrant:</strong> dense + sparse retrieval over legislation and framework libraries, scoped by jurisdiction and category, in separate collections so policy and framework text never mix</li>
-                                <li><strong>Document AI:</strong> Docling parsing of PDF/DOCX into chunked, embedded indexes, with stale chunks evicted when a document is replaced</li>
-                                <li><strong>Contract-first outputs:</strong> Pydantic-validated JSON per service against a written contract, so the backend can switch from mock to live with a config flag</li>
-                                <li><strong>Reproducibility &amp; evals:</strong> every scan records its prompt version, model, and engine build; an eval harness replays labelled cases to catch regressions</li>
-                                <li><strong>Cost governance:</strong> per-request token and cost tracking across models served through OpenRouter, attributed per school</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="project-tags">
-                        <span class="tag">FastAPI</span>
-                        <span class="tag">Hybrid RAG</span>
-                        <span class="tag">Qdrant</span>
-                        <span class="tag">Document AI</span>
-                        <span class="tag">SSE Streaming</span>
-                        <span class="tag">LLM Evals</span>
-                    </div>
-                </article>
-
-                <!-- IsleWay -->
-                <article class="featured-card">
-                    <div class="featured-header">
-                        <div class="featured-icon"><i class="fas fa-earth-europe"></i></div>
-                        <div>
-                            <h3>IsleWay</h3>
-                            <p class="featured-tagline">AI Travel Companion</p>
-                        </div>
-                        <span class="featured-status">In Production</span>
-                    </div>
-                    <div class="view-toggle" role="tablist">
-                        <button class="view-btn active" data-view="business" role="tab"><i class="fas fa-briefcase"></i> Business Impact</button>
-                        <button class="view-btn" data-view="technical" role="tab"><i class="fas fa-microchip"></i> Technical Deep-Dive</button>
-                    </div>
-                    <div class="view-panes">
-                        <div class="view-pane active" data-pane="business">
-                            <p>
-                                A travel platform for exploring Mediterranean island destinations. Static destination content
-                                doesn't answer a traveler's actual questions — so I built an AI companion that does.
-                            </p>
-                            <ul>
-                                <li><strong>Interactive concierge:</strong> travelers ask about destinations, itineraries, and logistics in natural language and get grounded answers from the platform's curated knowledge</li>
-                                <li><strong>Higher engagement:</strong> turns a content site into a conversation — keeping users planning inside the platform instead of leaving to search elsewhere</li>
-                                <li><strong>Cost-aware by design:</strong> built-in usage tracking keeps AI spend predictable as the audience grows</li>
-                            </ul>
-                        </div>
-                        <div class="view-pane" data-pane="technical">
-                            <ul>
-                                <li><strong>Agentic chat service:</strong> FastAPI backend with a clean route → controller → service architecture and a dedicated travel agent module</li>
-                                <li><strong>Knowledge retrieval:</strong> curated destination knowledge base powering grounded, on-brand answers</li>
-                                <li><strong>Production hygiene:</strong> request tracing with per-request IDs, structured logging, uniform response envelopes, centralized error handling</li>
-                                <li><strong>Quality gates:</strong> strict typing (mypy --strict), linting, and pre-commit hooks; background workers for async jobs</li>
-                                <li><strong>Cross-platform client:</strong> Flutter app (clean architecture) consuming the AI APIs</li>
-                            </ul>
-                        </div>
-                    </div>
-                    <div class="project-tags">
-                        <span class="tag">FastAPI</span>
-                        <span class="tag">Agentic AI</span>
-                        <span class="tag">RAG</span>
-                        <span class="tag">Docker</span>
-                        <span class="tag">Flutter</span>
-                    </div>
-                </article>
-            </div>
-
-            <!-- More Projects -->
-            <h3 class="more-title">More Projects</h3>
-            <div class="projects-grid">
-                <div class="project-card">
-                    <div class="project-icon"><i class="fas fa-database"></i></div>
-                    <h3>QueryMind</h3>
-                    <p class="project-tagline">Natural-Language Database Chatbot</p>
-                    <p>
-                        Chatbot leveraging PrestoDB to run SQL over Cassandra. An LLM converts natural-language
-                        questions into SQL, opening complex datasets to non-technical users.
-                    </p>
-                    <div class="project-tags">
-                        <span class="tag">LLM</span>
-                        <span class="tag">PrestoDB</span>
-                        <span class="tag">Cassandra</span>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-icon"><i class="fas fa-gavel"></i></div>
-                    <h3>ClauseLens</h3>
-                    <p class="project-tagline">Legal Document Intelligence</p>
-                    <p>
-                        RAG framework for legal document analysis: precise extraction with citations,
-                        in-document highlighting, and clause comparison across contracts.
-                    </p>
-                    <div class="project-tags">
-                        <span class="tag">RAG</span>
-                        <span class="tag">Document Analysis</span>
-                        <span class="tag">NLP</span>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-icon"><i class="fas fa-user-tie"></i></div>
-                    <h3>AskHR</h3>
-                    <p class="project-tagline">Voice-Enabled HR Assistant</p>
-                    <p>
-                        Voice-enabled agentic HR assistant with dynamic tool triggering — leave balances,
-                        holiday lookups, and RAG-grounded policy answers through natural conversation.
-                    </p>
-                    <div class="project-tags">
-                        <span class="tag">Agentic AI</span>
-                        <span class="tag">Voice</span>
-                        <span class="tag">RAG</span>
-                    </div>
-                </div>
-
-                <div class="project-card">
-                    <div class="project-icon"><i class="fas fa-heart"></i></div>
-                    <h3>MatchMind</h3>
-                    <p class="project-tagline">LLM Matchmaking Engine</p>
-                    <p>
-                        LLM-based matchmaking recommendation system with demographic rules and smart filtering.
-                        Early-stopping cut unnecessary API spend; parallel batch execution processed thousands of profiles efficiently.
-                    </p>
-                    <div class="project-tags">
-                        <span class="tag">Recommendations</span>
-                        <span class="tag">LLM</span>
-                        <span class="tag">Optimization</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Education Section -->
-    <section id="education" class="education section">
-        <div class="container">
-            <p class="section-eyebrow">Background</p>
-            <h2 class="section-title">Education</h2>
-            <div class="education-grid">
-                <div class="education-card">
-                    <div class="education-icon"><i class="fas fa-graduation-cap"></i></div>
-                    <h3>B.Tech (ICT)</h3>
-                    <h4>Sankalchand Patel University, Visnagar</h4>
-                    <p class="education-year">2019 – 2023</p>
-                    <p class="education-grade">CGPA: 8.33</p>
-                </div>
-
-                <div class="education-card">
-                    <div class="education-icon"><i class="fas fa-school"></i></div>
-                    <h3>Class XII</h3>
-                    <h4>Gurkul School of Science, Siddhpur</h4>
-                    <p class="education-year">2018 – 2019</p>
-                </div>
-
-                <div class="education-card">
-                    <div class="education-icon"><i class="fas fa-book"></i></div>
-                    <h3>Class X</h3>
-                    <h4>SMT S.B Doshi High School, Nandotra</h4>
-                    <p class="education-year">2016 – 2017</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact" class="contact section">
-        <div class="container">
-            <p class="section-eyebrow">Let's talk</p>
-            <h2 class="section-title">Get In Touch</h2>
-            <div class="contact-content">
-                <div class="contact-info">
-                    <div class="contact-item">
-                        <div class="contact-icon"><i class="fas fa-envelope"></i></div>
-                        <div>
-                            <h4>Email</h4>
-                            <a href="mailto:prajapatipareshkumar1032@gmail.com">prajapatipareshkumar1032@gmail.com</a>
-                        </div>
-                    </div>
-
-                    <div class="contact-item">
-                        <div class="contact-icon"><i class="fas fa-phone"></i></div>
-                        <div>
-                            <h4>Phone</h4>
-                            <a href="tel:+918849581032">+91 8849581032</a>
-                        </div>
-                    </div>
-
-                    <div class="contact-item">
-                        <div class="contact-icon"><i class="fas fa-map-marker-alt"></i></div>
-                        <div>
-                            <h4>Location</h4>
-                            <p>India · open to remote</p>
-                        </div>
-                    </div>
-
-                    <div class="contact-item">
-                        <div class="contact-icon"><i class="fas fa-globe"></i></div>
-                        <div>
-                            <h4>Languages</h4>
-                            <p>English, Hindi, Gujarati</p>
-                        </div>
-                    </div>
-
-                    <div class="contact-item">
-                        <div class="contact-icon"><i class="fab fa-github"></i></div>
-                        <div>
-                            <h4>GitHub</h4>
-                            <a href="https://github.com/paresh-112" target="_blank" rel="noopener">github.com/paresh-112</a>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="contact-form">
-                    <form id="contactForm">
-                        <div class="form-group">
-                            <input type="text" id="cf-name" placeholder="Your Name" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="email" id="cf-email" placeholder="Your Email" required>
-                        </div>
-                        <div class="form-group">
-                            <input type="text" id="cf-subject" placeholder="Subject" required>
-                        </div>
-                        <div class="form-group">
-                            <textarea id="cf-message" placeholder="Your Message" rows="5" required></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary btn-block"><i class="fas fa-paper-plane"></i> Send Message</button>
-                        <p class="form-hint">Opens your email client with the message pre-filled.</p>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </section>
+        <section id="about" class="section"></section>
+        <section id="skills" class="section section-tint"></section>
+        <section id="experience" class="section"></section>
+        <section id="projects" class="section section-tint"></section>
+        <section id="education" class="section"></section>
+        <section id="contact" class="section"></section>
+    </main>
 
     <!-- Footer -->
     <footer class="footer">
-        <div class="container">
-            <p>&copy; 2026 Paresh Prajapati. Built with vanilla JS — and a little AI.</p>
-            <div class="footer-links">
-                <a href="#home">Home</a>
-                <a href="#about">About</a>
-                <a href="#projects">Projects</a>
-                <a href="#contact">Contact</a>
-            </div>
-            <div class="footer-social">
-                <a href="mailto:prajapatipareshkumar1032@gmail.com" title="Email"><i class="fas fa-envelope"></i></a>
-                <a href="https://www.linkedin.com/in/paresh-prajapati-00a5b7243" title="LinkedIn" target="_blank" rel="noopener"><i class="fab fa-linkedin"></i></a>
-                <a href="https://github.com/paresh-112" title="GitHub" target="_blank" rel="noopener"><i class="fab fa-github"></i></a>
-            </div>
+        <div class="container footer-inner">
+            <p id="footerCopy"></p>
+            <p class="footer-tip">Press <kbd><span class="kbd-mod">⌘</span>K</kbd> to jump anywhere · <kbd>~</kbd> for a terminal</p>
+            <div class="footer-social" id="footerSocial"></div>
         </div>
     </footer>
 
     <!-- Back to top -->
-    <button id="backToTop" class="back-to-top" title="Back to top" aria-label="Back to top">
+    <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top">
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <!-- Command palette -->
+    <div class="cmdk-overlay" id="cmdk" hidden>
+        <div class="cmdk" role="dialog" aria-modal="true" aria-label="Quick search">
+            <div class="cmdk-search">
+                <i class="fas fa-magnifying-glass"></i>
+                <input type="text" id="cmdkInput" placeholder="Jump to a section, project, or action…" autocomplete="off" spellcheck="false"
+                       role="combobox" aria-expanded="true" aria-controls="cmdkList" aria-autocomplete="list">
+                <kbd>esc</kbd>
+            </div>
+            <ul class="cmdk-list" id="cmdkList" role="listbox"></ul>
+        </div>
+    </div>
+
     <!-- AI Chatbot Widget -->
     <div id="chat-widget" class="chat-widget">
-        <button id="chat-toggle" class="chat-toggle" title="Chat with Paresh's AI">
+        <button id="chat-toggle" class="chat-toggle" title="Chat with Paresh's AI" aria-label="Chat with Paresh's AI">
             <i class="fas fa-robot"></i>
             <span class="chat-toggle-badge">AI</span>
         </button>
@@ -668,6 +208,6 @@ app = agent.compile(
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="render.js"></script>
 </body>
 </html>
