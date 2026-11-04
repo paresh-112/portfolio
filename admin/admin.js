@@ -387,6 +387,7 @@
                 h('div', { class: 'grid-2' },
                     textField(['profile', 'name'], 'Full name'),
                     textField(['profile', 'role'], 'Job title'),
+                    linesField(['profile', 'roles'], 'Rotating titles in the hero', { rows: 4, hint: 'One per line. They take turns under your name.' }),
                     textField(['profile', 'shortName'], 'Short name', { hint: 'Shown next to the logo.' }),
                     textField(['profile', 'initials'], 'Logo initials', { hint: 'Two or three letters.' }))),
             card('Hero', 'The first thing visitors see.',
@@ -563,7 +564,8 @@
         ['Graphite', '#334155', '#0f766e']
     ];
 
-    const FONTS = ['Bricolage Grotesque', 'Space Grotesk', 'Sora', 'Fraunces', 'Outfit'];
+    const FONTS = ['Instrument Serif', 'Fraunces', 'Bricolage Grotesque', 'Space Grotesk', 'Sora', 'Outfit'];
+    const FONT_WEIGHTS = { 'Instrument Serif': 400, 'Fraunces': 600 };
 
     function renderTheme() {
         const colorInput = (key, label) => {
@@ -598,6 +600,7 @@
                 const mix = (hex) => (dark ? `color-mix(in srgb, ${hex} 55%, white)` : hex);
                 const soft = (hex) => (dark ? `color-mix(in srgb, ${hex} 22%, transparent)` : `color-mix(in srgb, ${hex} 12%, white)`);
                 box.style.fontFamily = `'${t.headingFont || FONTS[0]}', system-ui, sans-serif`;
+                box.style.setProperty('--tp-weight', FONT_WEIGHTS[t.headingFont || FONTS[0]] || 800);
                 box.replaceChildren(
                     h('span', { class: 'tp-title' }, 'I build AI ', h('span', { style: `color:${mix(t.primary)}` }, 'that ships.')),
                     h('div', { class: 'tp-row' },

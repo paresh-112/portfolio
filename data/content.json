@@ -11,8 +11,8 @@
   "theme": {
     "primary": "#4f46e5",
     "secondary": "#0f766e",
-    "defaultMode": "system",
-    "headingFont": "Bricolage Grotesque",
+    "defaultMode": "dark",
+    "headingFont": "Instrument Serif",
     "sectionNumbers": true,
     "animations": true,
     "cursorGlow": true
@@ -22,6 +22,12 @@
     "shortName": "Paresh",
     "initials": "PP",
     "role": "AI/ML Engineer",
+    "roles": [
+      "AI/ML Engineer",
+      "Agentic Systems Builder",
+      "RAG Pipeline Engineer",
+      "LLMOps & Evals"
+    ],
     "status": "Open to AI/ML roles · AI Engineer at Encodedots",
     "openToWork": true,
     "headlineTop": "I build AI",
@@ -36,9 +42,21 @@
     "github": "https://github.com/paresh-112",
     "linkedin": "https://www.linkedin.com/in/paresh-prajapati-00a5b7243",
     "stats": [
-      { "value": 3, "suffix": "+", "label": "years in production AI" },
-      { "value": 11, "suffix": "", "label": "AI projects built" },
-      { "value": 3, "suffix": "", "label": "platforms live today" }
+      {
+        "value": 3,
+        "suffix": "+",
+        "label": "years in production AI"
+      },
+      {
+        "value": 11,
+        "suffix": "",
+        "label": "AI projects built"
+      },
+      {
+        "value": 3,
+        "suffix": "",
+        "label": "platforms live today"
+      }
     ]
   },
   "about": {
@@ -56,9 +74,18 @@
     ],
     "askTitle": "Ask my AI instead",
     "ask": [
-      { "label": "What has he shipped?", "question": "What has he built in production?" },
-      { "label": "Is he a fit for my role?", "question": "Is he a fit for a GenAI role?" },
-      { "label": "Tell me about PolicyGuard", "question": "Tell me about PolicyGuard" }
+      {
+        "label": "What has he shipped?",
+        "question": "What has he built in production?"
+      },
+      {
+        "label": "Is he a fit for my role?",
+        "question": "Is he a fit for a GenAI role?"
+      },
+      {
+        "label": "Tell me about PolicyGuard",
+        "question": "Tell me about PolicyGuard"
+      }
     ]
   },
   "demo": [
@@ -66,53 +93,195 @@
       "project": "CaterNest",
       "tone": "amber",
       "query": "Find vegetarian caterers for 40 people this Friday",
-      "steps": ["Understand intent", "Hybrid search · OpenSearch", "Call menu tools", "PII guardrails", "Stream answer"],
+      "steps": [
+        "Understand intent",
+        "Hybrid search · OpenSearch",
+        "Call menu tools",
+        "PII guardrails",
+        "Stream answer"
+      ],
       "answer": "Found vegetarian packages for 40 guests from caterers free on Friday. Want me to compare the top three?"
     },
     {
       "project": "PolicyGuard",
       "tone": "indigo",
       "query": "Check our safeguarding policy against current legislation",
-      "steps": ["Parse document · Docling", "Retrieve legislation · Qdrant", "Score compliance gaps", "Escalate-on-doubt check", "Stream report"],
+      "steps": [
+        "Parse document · Docling",
+        "Retrieve legislation · Qdrant",
+        "Score compliance gaps",
+        "Escalate-on-doubt check",
+        "Stream report"
+      ],
       "answer": "Gaps listed with the rule each one breaks, and a rewrite drafted — waiting for a person to sign off."
     },
     {
       "project": "IsleWay",
       "tone": "teal",
       "query": "Plan 3 relaxed days on an island with easy ferry links",
-      "steps": ["Understand intent", "Search island guides", "Build itinerary", "Grounding check", "Stream answer"],
+      "steps": [
+        "Understand intent",
+        "Search island guides",
+        "Build itinerary",
+        "Grounding check",
+        "Stream answer"
+      ],
       "answer": "A 3-day plan with ferry times, beach days and places to eat — drawn from the platform's own guides."
     }
   ],
   "marquee": [
-    { "label": "Python", "icon": "fab fa-python" },
-    { "label": "LangGraph", "icon": "fas fa-diagram-project" },
-    { "label": "LangChain", "icon": "fas fa-link" },
-    { "label": "AWS Bedrock", "icon": "fab fa-aws" },
-    { "label": "FastAPI", "icon": "fas fa-bolt" },
-    { "label": "Qdrant", "icon": "fas fa-cubes" },
-    { "label": "OpenSearch", "icon": "fas fa-magnifying-glass" },
-    { "label": "Docker", "icon": "fab fa-docker" },
-    { "label": "PostgreSQL", "icon": "fas fa-database" },
-    { "label": "Redis", "icon": "fas fa-layer-group" },
-    { "label": "Docling", "icon": "fas fa-file-lines" },
-    { "label": "OpenRouter", "icon": "fas fa-route" },
-    { "label": "AssemblyAI", "icon": "fas fa-microphone-lines" },
-    { "label": "LLM Evals", "icon": "fas fa-flask" }
+    {
+      "label": "Python",
+      "icon": "fab fa-python"
+    },
+    {
+      "label": "LangGraph",
+      "icon": "fas fa-diagram-project"
+    },
+    {
+      "label": "LangChain",
+      "icon": "fas fa-link"
+    },
+    {
+      "label": "AWS Bedrock",
+      "icon": "fab fa-aws"
+    },
+    {
+      "label": "FastAPI",
+      "icon": "fas fa-bolt"
+    },
+    {
+      "label": "Qdrant",
+      "icon": "fas fa-cubes"
+    },
+    {
+      "label": "OpenSearch",
+      "icon": "fas fa-magnifying-glass"
+    },
+    {
+      "label": "Docker",
+      "icon": "fab fa-docker"
+    },
+    {
+      "label": "PostgreSQL",
+      "icon": "fas fa-database"
+    },
+    {
+      "label": "Redis",
+      "icon": "fas fa-layer-group"
+    },
+    {
+      "label": "Docling",
+      "icon": "fas fa-file-lines"
+    },
+    {
+      "label": "OpenRouter",
+      "icon": "fas fa-route"
+    },
+    {
+      "label": "AssemblyAI",
+      "icon": "fas fa-microphone-lines"
+    },
+    {
+      "label": "LLM Evals",
+      "icon": "fas fa-flask"
+    }
   ],
   "skills": [
-    { "name": "GenAI & Agents", "icon": "fas fa-robot", "tone": "indigo", "wide": true,
-      "items": ["LLMs", "LangChain", "LangGraph", "Deep Agents", "Tool-calling agents", "Multi-agent workflows", "Text-to-SQL", "Prompt engineering", "Structured outputs"] },
-    { "name": "RAG & Search", "icon": "fas fa-magnifying-glass-chart", "tone": "teal", "wide": false,
-      "items": ["Hybrid retrieval", "Qdrant", "OpenSearch", "FastEmbed", "Docling", "Chunking pipelines"] },
-    { "name": "Backend", "icon": "fas fa-code", "tone": "amber", "wide": false,
-      "items": ["Python", "FastAPI", "Django", "Flask", "SSE streaming", "ARQ / Redis queues", "JWT auth"] },
-    { "name": "Cloud & Data", "icon": "fas fa-cloud", "tone": "teal", "wide": false,
-      "items": ["AWS Bedrock", "ECS Fargate", "Textract", "S3", "PostgreSQL", "MySQL", "MongoDB", "Redis", "Docker"] },
-    { "name": "LLMOps & Quality", "icon": "fas fa-gauge-high", "tone": "indigo", "wide": false,
-      "items": ["LLM evals", "OpenTelemetry tracing", "Token & cost tracking", "Sentry", "pytest", "mypy --strict"] },
-    { "name": "ML, Speech & Fine-tuning", "icon": "fas fa-brain", "tone": "amber", "wide": true,
-      "items": ["Pandas", "NumPy", "TensorFlow", "Scikit-learn", "Hugging Face", "QLoRA", "Synthetic training data", "AssemblyAI", "Tesseract OCR"] }
+    {
+      "name": "GenAI & Agents",
+      "icon": "fas fa-robot",
+      "tone": "indigo",
+      "wide": true,
+      "items": [
+        "LLMs",
+        "LangChain",
+        "LangGraph",
+        "Deep Agents",
+        "Tool-calling agents",
+        "Multi-agent workflows",
+        "Text-to-SQL",
+        "Prompt engineering",
+        "Structured outputs"
+      ]
+    },
+    {
+      "name": "RAG & Search",
+      "icon": "fas fa-magnifying-glass-chart",
+      "tone": "teal",
+      "wide": false,
+      "items": [
+        "Hybrid retrieval",
+        "Qdrant",
+        "OpenSearch",
+        "FastEmbed",
+        "Docling",
+        "Chunking pipelines"
+      ]
+    },
+    {
+      "name": "Backend",
+      "icon": "fas fa-code",
+      "tone": "amber",
+      "wide": false,
+      "items": [
+        "Python",
+        "FastAPI",
+        "Django",
+        "Flask",
+        "SSE streaming",
+        "ARQ / Redis queues",
+        "JWT auth"
+      ]
+    },
+    {
+      "name": "Cloud & Data",
+      "icon": "fas fa-cloud",
+      "tone": "teal",
+      "wide": false,
+      "items": [
+        "AWS Bedrock",
+        "ECS Fargate",
+        "Textract",
+        "S3",
+        "PostgreSQL",
+        "MySQL",
+        "MongoDB",
+        "Redis",
+        "Docker"
+      ]
+    },
+    {
+      "name": "LLMOps & Quality",
+      "icon": "fas fa-gauge-high",
+      "tone": "indigo",
+      "wide": false,
+      "items": [
+        "LLM evals",
+        "OpenTelemetry tracing",
+        "Token & cost tracking",
+        "Sentry",
+        "pytest",
+        "mypy --strict"
+      ]
+    },
+    {
+      "name": "ML, Speech & Fine-tuning",
+      "icon": "fas fa-brain",
+      "tone": "amber",
+      "wide": true,
+      "items": [
+        "Pandas",
+        "NumPy",
+        "TensorFlow",
+        "Scikit-learn",
+        "Hugging Face",
+        "QLoRA",
+        "Synthetic training data",
+        "AssemblyAI",
+        "Tesseract OCR"
+      ]
+    }
   ],
   "experience": [
     {
@@ -149,7 +318,14 @@
         "icon": "fas fa-utensils",
         "tone": "amber",
         "status": "In production",
-        "tags": ["LangGraph", "AWS Bedrock", "OpenSearch", "PostgreSQL", "Textract", "ECS Fargate"],
+        "tags": [
+          "LangGraph",
+          "AWS Bedrock",
+          "OpenSearch",
+          "PostgreSQL",
+          "Textract",
+          "ECS Fargate"
+        ],
         "intro": "A marketplace connecting businesses with caterers — where ordering used to mean phone calls and PDF menus. I built the AI layer that removes that friction on both sides.",
         "business": [
           "**Conversational ordering:** customers describe what they need in plain English — the assistant finds matching caterers, browses menus, and helps assemble orders",
@@ -172,7 +348,14 @@
         "icon": "fas fa-shield-halved",
         "tone": "indigo",
         "status": "In production",
-        "tags": ["FastAPI", "Hybrid RAG", "Qdrant", "Document AI", "SSE Streaming", "LLM Evals"],
+        "tags": [
+          "FastAPI",
+          "Hybrid RAG",
+          "Qdrant",
+          "Document AI",
+          "SSE Streaming",
+          "LLM Evals"
+        ],
         "intro": "A safeguarding and compliance platform for schools, where policy reviews, incident reporting, and supplier checks are slow, manual, and high-stakes. I built the AI engine behind it: a suite of services that scans, rewrites, and triages in minutes, while a person still signs off on every decision that matters.",
         "business": [
           "**Policy compliance scans:** scores a school's policies against the current legislation register, lists the gaps, rewrites the policy to close them, and suggests refresher training for staff",
@@ -196,7 +379,13 @@
         "icon": "fas fa-earth-europe",
         "tone": "teal",
         "status": "In production",
-        "tags": ["FastAPI", "Agentic AI", "RAG", "Docker", "Flutter"],
+        "tags": [
+          "FastAPI",
+          "Agentic AI",
+          "RAG",
+          "Docker",
+          "Flutter"
+        ],
         "intro": "A travel platform for exploring Mediterranean island destinations. Static destination content doesn't answer a traveler's actual questions — so I built an AI companion that does.",
         "business": [
           "**Interactive concierge:** travelers ask about destinations, itineraries, and logistics in natural language and get grounded answers from the platform's curated knowledge",
@@ -213,43 +402,189 @@
       }
     ],
     "more": [
-      { "id": "finscribe", "name": "FinScribe", "tagline": "Financial report agent", "icon": "fas fa-chart-line", "tone": "indigo", "wide": true,
+      {
+        "id": "finscribe",
+        "name": "FinScribe",
+        "tagline": "Financial report agent",
+        "icon": "fas fa-chart-line",
+        "tone": "indigo",
+        "wide": true,
         "description": "A LangChain ReAct agent that writes and edits financial reports, streamed over SSE. Every figure is bound to the calculation engine instead of typed by the model — so it can't invent a number.",
-        "tags": ["Deep Agents", "FastAPI", "OpenTelemetry"] },
-      { "id": "carepilot", "name": "CarePilot", "tagline": "Role-based care assistant", "icon": "fas fa-hand-holding-heart", "tone": "teal", "wide": false,
+        "tags": [
+          "Deep Agents",
+          "FastAPI",
+          "OpenTelemetry"
+        ]
+      },
+      {
+        "id": "carepilot",
+        "name": "CarePilot",
+        "tagline": "Role-based care assistant",
+        "icon": "fas fa-hand-holding-heart",
+        "tone": "teal",
+        "wide": false,
         "description": "Per-role toolsets for participants, carers, and support workers. Text-to-SQL is parsed, read-only, and rewritten to each user's permitted data.",
-        "tags": ["sqlglot", "ARQ", "ECS"] },
-      { "id": "athleteiq", "name": "AthleteIQ", "tagline": "Sports assessment reports", "icon": "fas fa-person-running", "tone": "amber", "wide": false,
+        "tags": [
+          "sqlglot",
+          "ARQ",
+          "ECS"
+        ]
+      },
+      {
+        "id": "athleteiq",
+        "name": "AthleteIQ",
+        "tagline": "Sports assessment reports",
+        "icon": "fas fa-person-running",
+        "tone": "amber",
+        "wide": false,
         "description": "Concussion and injury reports from athlete data, plus treatment plans from recorded sessions using speaker diarization.",
-        "tags": ["Claude", "AssemblyAI", "Redis"] },
-      { "id": "menuforge", "name": "MenuForge", "tagline": "Fine-tuning data pipeline", "icon": "fas fa-hammer", "tone": "indigo", "wide": false,
+        "tags": [
+          "Claude",
+          "AssemblyAI",
+          "Redis"
+        ]
+      },
+      {
+        "id": "menuforge",
+        "name": "MenuForge",
+        "tagline": "Fine-tuning data pipeline",
+        "icon": "fas fa-hammer",
+        "tone": "indigo",
+        "wide": false,
         "description": "Labels first, then typeset and photo-degraded menu pages, so OCR → JSON training pairs are exact by construction.",
-        "tags": ["QLoRA", "Tesseract", "Synthetic data"] },
-      { "id": "querymind", "name": "QueryMind", "tagline": "Natural-language database chatbot", "icon": "fas fa-database", "tone": "teal", "wide": false,
+        "tags": [
+          "QLoRA",
+          "Tesseract",
+          "Synthetic data"
+        ]
+      },
+      {
+        "id": "querymind",
+        "name": "QueryMind",
+        "tagline": "Natural-language database chatbot",
+        "icon": "fas fa-database",
+        "tone": "teal",
+        "wide": false,
         "description": "An LLM turns plain questions into SQL run through PrestoDB over Cassandra, opening complex data to non-technical users.",
-        "tags": ["LLM", "PrestoDB", "Cassandra"] },
-      { "id": "clauselens", "name": "ClauseLens", "tagline": "Legal document intelligence", "icon": "fas fa-gavel", "tone": "amber", "wide": false,
+        "tags": [
+          "LLM",
+          "PrestoDB",
+          "Cassandra"
+        ]
+      },
+      {
+        "id": "clauselens",
+        "name": "ClauseLens",
+        "tagline": "Legal document intelligence",
+        "icon": "fas fa-gavel",
+        "tone": "amber",
+        "wide": false,
         "description": "RAG for legal analysis: extraction with citations, in-document highlighting, and clause comparison across contracts.",
-        "tags": ["RAG", "Document analysis"] },
-      { "id": "askhr", "name": "AskHR", "tagline": "Voice-enabled HR assistant", "icon": "fas fa-user-tie", "tone": "indigo", "wide": false,
+        "tags": [
+          "RAG",
+          "Document analysis"
+        ]
+      },
+      {
+        "id": "askhr",
+        "name": "AskHR",
+        "tagline": "Voice-enabled HR assistant",
+        "icon": "fas fa-user-tie",
+        "tone": "indigo",
+        "wide": false,
         "description": "Agentic assistant with dynamic tool triggering — leave balances, holiday lookups, and RAG-grounded policy answers.",
-        "tags": ["Agentic AI", "Voice", "RAG"] },
-      { "id": "matchmind", "name": "MatchMind", "tagline": "LLM matchmaking engine", "icon": "fas fa-heart", "tone": "teal", "wide": false,
+        "tags": [
+          "Agentic AI",
+          "Voice",
+          "RAG"
+        ]
+      },
+      {
+        "id": "matchmind",
+        "name": "MatchMind",
+        "tagline": "LLM matchmaking engine",
+        "icon": "fas fa-heart",
+        "tone": "teal",
+        "wide": false,
         "description": "Recommendations with demographic rules and smart filtering. Early-stopping cut unnecessary API spend; parallel batches processed thousands of profiles.",
-        "tags": ["Recommendations", "LLM", "Optimization"] }
+        "tags": [
+          "Recommendations",
+          "LLM",
+          "Optimization"
+        ]
+      }
     ]
   },
   "education": [
-    { "degree": "B.Tech, Information & Communication Technology", "school": "Sankalchand Patel University, Visnagar", "grade": "CGPA 8.33", "start": "2019", "end": "2023", "icon": "fas fa-graduation-cap" },
-    { "degree": "Class XII", "school": "Gurkul School of Science, Siddhpur", "grade": "", "start": "2018", "end": "2019", "icon": "fas fa-school" },
-    { "degree": "Class X", "school": "SMT S.B Doshi High School, Nandotra", "grade": "", "start": "2016", "end": "2017", "icon": "fas fa-book" }
+    {
+      "degree": "B.Tech, Information & Communication Technology",
+      "school": "Sankalchand Patel University, Visnagar",
+      "grade": "CGPA 8.33",
+      "start": "2019",
+      "end": "2023",
+      "icon": "fas fa-graduation-cap"
+    },
+    {
+      "degree": "Class XII",
+      "school": "Gurkul School of Science, Siddhpur",
+      "grade": "",
+      "start": "2018",
+      "end": "2019",
+      "icon": "fas fa-school"
+    },
+    {
+      "degree": "Class X",
+      "school": "SMT S.B Doshi High School, Nandotra",
+      "grade": "",
+      "start": "2016",
+      "end": "2017",
+      "icon": "fas fa-book"
+    }
   ],
   "sections": {
-    "about": { "show": true, "label": "About", "index": "About", "heading": "Model quality is half the job.", "subheading": "The other half is making it work in production." },
-    "skills": { "show": true, "label": "Skills", "index": "Skills", "heading": "The toolbox", "subheading": "" },
-    "experience": { "show": true, "label": "Experience", "index": "Experience", "heading": "Where I've worked", "subheading": "" },
-    "projects": { "show": true, "label": "Work", "index": "Selected work", "heading": "Platforms in production", "subheading": "Each one from two angles: the business problem it solves, and how it works under the hood.", "moreHeading": "More things I've built", "moreSubheading": "Agents, report writers, search, and a fine-tuning pipeline." },
-    "education": { "show": true, "label": "Education", "index": "Education", "heading": "Background", "subheading": "" },
-    "contact": { "show": true, "label": "Contact", "index": "Contact", "heading": "Have an AI problem worth shipping?", "subheading": "I'm open to AI/ML engineering roles and interesting projects. The fastest way to reach me is email." }
+    "about": {
+      "show": true,
+      "label": "About",
+      "index": "About",
+      "heading": "Model quality is half the job.",
+      "subheading": "The other half is making it work in production."
+    },
+    "skills": {
+      "show": true,
+      "label": "Skills",
+      "index": "Skills",
+      "heading": "The toolbox",
+      "subheading": ""
+    },
+    "experience": {
+      "show": true,
+      "label": "Experience",
+      "index": "Experience",
+      "heading": "Where I've worked",
+      "subheading": ""
+    },
+    "projects": {
+      "show": true,
+      "label": "Work",
+      "index": "Selected work",
+      "heading": "Platforms in production",
+      "subheading": "Each one from two angles: the business problem it solves, and how it works under the hood.",
+      "moreHeading": "More things I've built",
+      "moreSubheading": "Agents, report writers, search, and a fine-tuning pipeline."
+    },
+    "education": {
+      "show": true,
+      "label": "Education",
+      "index": "Education",
+      "heading": "Background",
+      "subheading": ""
+    },
+    "contact": {
+      "show": true,
+      "label": "Contact",
+      "index": "Contact",
+      "heading": "Have an AI problem worth shipping?",
+      "subheading": "I'm open to AI/ML engineering roles and interesting projects. The fastest way to reach me is email."
+    }
   }
 }

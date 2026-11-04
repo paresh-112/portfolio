@@ -148,6 +148,117 @@ if (FINE_POINTER && !document.documentElement.classList.contains('no-glow')) {
     });
 }
 
+// ============ Rotating role titles under the name ============
+(function initRoles() {
+    const roleEl = document.getElementById('heroRole');
+    const bars = [...document.querySelectorAll('.role-bars li')];
+    if (!roleEl || bars.length < 2 || !MOTION_OK) return;
+
+    const HOLD_MS = 3200; // matches the bar fill animation in styles.css
+    let index = 0;
+    setInterval(() => {
+        if (document.hidden) return;
+        bars[index].classList.remove('active');
+        index = (index + 1) % bars.length;
+        bars[index].classList.add('active');
+        roleEl.classList.remove('swap');
+        void roleEl.offsetWidth; // restart the swap animation
+        roleEl.textContent = bars[index].dataset.role;
+        roleEl.classList.add('swap');
+    }, HOLD_MS);
+})();
+
+// ============ Statement: words light up as the section scrolls past ============
+(function initStatement() {
+    const section = document.getElementById('statement');
+    const words = [...document.querySelectorAll('.statement-title .sw')];
+    if (!section || !words.length) return;
+    if (!MOTION_OK) {
+        words.forEach((w) => w.classList.add('lit'));
+        return;
+    }
+
+    let ticking = false;
+    function update() {
+        ticking = false;
+        const rect = section.getBoundingClientRect();
+        // 0 when the section's top reaches 85% of the viewport, 1 by 35%
+        const progress = Math.min(Math.max((window.innerHeight * 0.85 - rect.top) / (window.innerHeight * 0.5), 0), 1);
+        const lit = Math.round(progress * words.length);
+        words.forEach((w, i) => w.classList.toggle('lit', i < lit));
+    }
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+    }, { passive: true });
+    update();
+})();
+
+// ============ 3D tilt on cards ============
+if (FINE_POINTER && MOTION_OK) {
+    document.querySelectorAll('.tilt, .tile, .featured-card').forEach((card) => {
+        const strength = card.classList.contains('featured-card') ? 3 : 6;
+        card.addEventListener('pointermove', (e) => {
+            const rect = card.getBoundingClientRect();
+            const px = (e.clientX - rect.left) / rect.width - 0.5;
+            const py = (e.clientY - rect.top) / rect.height - 0.5;
+            card.style.setProperty('--rx', `${(-py * strength).toFixed(2)}deg`);
+            card.style.setProperty('--ry', `${(px * strength).toFixed(2)}deg`);
+        });
+        card.addEventListener('pointerleave', () => {
+            card.style.setProperty('--rx', '0deg');
+            card.style.setProperty('--ry', '0deg');
+        });
+    });
+}
+
+// ============ Section rail (wide screens) ============
+(function initRail() {
+    const rail = document.getElementById('scrollRail');
+    if (!rail || !navSections.length) return;
+    rail.innerHTML = '<span class="rail-track"><span class="rail-fill"></span></span>';
+    const fill = rail.querySelector('.rail-fill');
+    const marks = navSections.map(({ link, section }) => {
+        const mark = document.createElement('a');
+        mark.className = 'rail-mark';
+        mark.href = link.getAttribute('href');
+        mark.innerHTML = '<span class="rail-label"></span>';
+        mark.querySelector('.rail-label').textContent = link.textContent;
+        rail.appendChild(mark);
+        return { mark, section };
+    });
+
+    function place() {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        marks.forEach(({ mark, section }) => {
+            mark.style.top = `${Math.min(Math.max(section.offsetTop / (max + window.innerHeight), 0), 1) * 100}%`;
+        });
+    }
+
+    let ticking = false;
+    function update() {
+        ticking = false;
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        fill.style.transform = `scaleY(${max > 0 ? window.scrollY / max : 0})`;
+        const probe = window.scrollY + window.innerHeight * 0.35;
+        marks.forEach(({ mark, section }) => {
+            mark.classList.toggle('active', probe >= section.offsetTop && probe < section.offsetTop + section.offsetHeight);
+        });
+    }
+    window.addEventListener('scroll', () => {
+        if (!ticking) {
+            ticking = true;
+            requestAnimationFrame(update);
+        }
+    }, { passive: true });
+    window.addEventListener('resize', place);
+    window.addEventListener('load', place);
+    place();
+    update();
+})();
+
 // ============ Tech marquee: duplicate the track so the loop is seamless ============
 if (MOTION_OK) {
     document.querySelectorAll('.marquee-track').forEach((track) => {

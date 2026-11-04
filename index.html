@@ -26,7 +26,7 @@
     </script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="widgets.css">
@@ -38,6 +38,9 @@
 </head>
 <body>
     <a class="skip-link" href="#main">Skip to content</a>
+
+    <!-- 3D vector space drawn by space.js -->
+    <canvas id="space" class="space" aria-hidden="true"></canvas>
 
     <!-- Scroll progress bar -->
     <div class="scroll-progress" id="scrollProgress"></div>
@@ -71,20 +74,26 @@
     <noscript><p class="load-error">This portfolio needs JavaScript to show its content. You can still <a href="Paresh_Prajapati_Resume.pdf">download the resume</a>.</p></noscript>
 
     <main id="main">
-        <!-- Hero -->
+        <!-- Hero: your name over the 3D vector space -->
         <section id="home" class="hero">
-            <div class="hero-bg" aria-hidden="true">
-                <div class="hero-dots"></div>
-                <div class="blob blob-1"></div>
-                <div class="blob blob-2"></div>
-                <div class="blob blob-3"></div>
-            </div>
-
             <div class="container hero-inner">
                 <div class="hero-copy" id="heroCopy"></div>
+            </div>
+            <a href="#statement" class="scroll-cue" aria-label="Scroll down">
+                <span>scroll</span><i class="fas fa-arrow-down"></i>
+            </a>
+        </section>
 
-                <!-- Signature moment: a live agent run that mirrors how Paresh's systems work -->
-                <div class="agent-demo" aria-label="Animated example of an AI agent answering a question">
+        <!-- Statement: the headline, revealed word by word, beside a live agent run -->
+        <section id="statement" class="statement" aria-label="What I do">
+            <div class="container statement-inner">
+                <div class="statement-copy" id="statementCopy"></div>
+
+                <div class="agent-demo tilt" aria-label="Animated example of an AI agent answering a question">
+                    <span class="frame-corner tl" aria-hidden="true"></span>
+                    <span class="frame-corner tr" aria-hidden="true"></span>
+                    <span class="frame-corner bl" aria-hidden="true"></span>
+                    <span class="frame-corner br" aria-hidden="true"></span>
                     <div class="demo-head">
                         <span class="demo-title"><i class="fas fa-diagram-project"></i> agent run</span>
                         <span class="demo-project" id="demoProject"></span>
@@ -128,6 +137,9 @@
             <div class="footer-social" id="footerSocial"></div>
         </div>
     </footer>
+
+    <!-- Section rail on wide screens, built by script.js -->
+    <nav class="scroll-rail" id="scrollRail" aria-label="Sections"></nav>
 
     <!-- Back to top -->
     <button id="backToTop" class="back-to-top" type="button" aria-label="Back to top">

@@ -944,7 +944,7 @@ ul {
 
 .theme-preview .tp-title {
     font-size: 1.8rem;
-    font-weight: 800;
+    font-weight: var(--tp-weight, 800);
     line-height: 1;
 }
 

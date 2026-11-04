@@ -10,8 +10,11 @@
     const DRAFT_KEY = 'portfolio-admin-draft';
     const DEFAULT_PRIMARY = '#4f46e5';
     const DEFAULT_SECONDARY = '#0f766e';
-    const DEFAULT_FONT = 'Bricolage Grotesque';
+    const DEFAULT_FONT = 'Instrument Serif';
+    // Display weight per font: the serifs are drawn light, the grotesks bold
+    const FONT_WEIGHTS = { 'Instrument Serif': 400, 'Fraunces': 600 };
     const HEADING_FONTS = {
+        'Instrument Serif': 'Instrument+Serif:ital@0;1',
         'Bricolage Grotesque': 'Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800',
         'Space Grotesk': 'Space+Grotesk:wght@500;600;700',
         'Sora': 'Sora:wght@600;700;800',
@@ -102,7 +105,7 @@
             link.rel = 'stylesheet';
             link.href = `https://fonts.googleapis.com/css2?family=${HEADING_FONTS[font]}&display=swap`;
             document.head.appendChild(link);
-            css.push(`:root{--font-display:'${font}','Inter',system-ui,sans-serif;}`);
+            css.push(`:root{--font-display:'${font}','Inter',system-ui,sans-serif;--display-weight:${FONT_WEIGHTS[font] || 700};--display-tracking:-0.035em;}`);
         }
 
         if (css.length) {
@@ -162,21 +165,46 @@
         const resume = safeUrl(p.resume);
         const resumeName = resume.split('/').pop();
 
+        const nameParts = String(p.name || '').trim().split(/\s+/);
+        const first = nameParts.shift() || '';
+        const rest = nameParts.join(' ');
+        const roles = list(p.roles).filter(Boolean);
+        const shownRoles = roles.length ? roles : [p.role].filter(Boolean);
+
         document.getElementById('heroCopy').innerHTML = `
-            ${p.openToWork !== false && p.status ? `<p class="status-pill"><span class="pulse-dot"></span> ${esc(p.status)}</p>` : ''}
-            <h1 class="hero-title">
-                <span class="hero-line"><span class="word">${esc(p.headlineTop)}</span></span>
-                <span class="hero-line">${p.headlineBottom ? `<span class="word">${esc(p.headlineBottom)}</span> ` : ''}<span class="word accent-word">${esc(p.headlineAccent)}</span></span>
+            <p class="hero-meta">
+                ${p.openToWork !== false && p.status ? `<span class="meta-status"><span class="pulse-dot"></span>${esc(p.status)}</span>` : ''}
+                ${p.location ? `<span class="meta-sep">/</span><span>${esc(p.location)}${p.locationNote ? ` · ${esc(String(p.locationNote).split('·')[0].trim())}` : ''}</span>` : ''}
+            </p>
+            <p class="hero-hello">Hi, I'm</p>
+            <h1 class="hero-name">
+                <span class="name-first word">${esc(first)}</span>
+                ${rest ? `<span class="name-last word">${esc(rest)}</span>` : ''}
             </h1>
+            ${shownRoles.length ? `
+            <p class="hero-role"><span class="role-caret">&gt;</span> <span id="heroRole">${esc(shownRoles[0])}</span></p>
+            ${shownRoles.length > 1 ? `<ol class="role-bars" aria-hidden="true">${shownRoles.map((r, i) => `
+                <li${i === 0 ? ' class="active"' : ''} data-role="${esc(r)}"><span class="bar"><i></i></span>${esc(r)}</li>`).join('')}
+            </ol>` : ''}` : ''}
             <p class="hero-lede">${rich(p.lede)}</p>
             <div class="hero-actions">
-                ${data.sections?.projects?.show !== false ? '<a href="#projects" class="btn btn-primary"><i class="fas fa-arrow-down"></i> See my work</a>' : ''}
-                <button type="button" class="btn btn-soft" data-open-chat><i class="fas fa-wand-magic-sparkles"></i> Ask my AI</button>
-                ${resume ? `<a href="${esc(resume)}" download="${esc(resumeName)}" class="btn btn-ghost" data-resume><i class="fas fa-file-arrow-down"></i> Resume</a>` : ''}
+                ${data.sections?.projects?.show !== false ? '<a href="#projects" class="btn btn-primary">See my work <i class="fas fa-arrow-right"></i></a>' : ''}
+                <button type="button" class="btn btn-ghost" data-open-chat><i class="fas fa-wand-magic-sparkles"></i> Ask my AI</button>
+                ${resume ? `<a href="${esc(resume)}" download="${esc(resumeName)}" class="btn btn-ghost" data-resume><i class="fas fa-file-arrow-down"></i> Résumé</a>` : ''}
             </div>
             ${list(p.stats).length ? `<ul class="hero-stats" aria-label="At a glance">${list(p.stats).map((s) => `
                 <li><strong data-count="${Number(s.value) || 0}" data-suffix="${esc(s.suffix)}">${esc(s.value)}${esc(s.suffix)}</strong><span>${esc(s.label)}</span></li>`).join('')}
             </ul>` : ''}`;
+
+        // The headline moves to the statement section, split into words for the scroll reveal
+        const words = (text, cls = '') => String(text || '').split(/\s+/).filter(Boolean)
+            .map((w) => `<span class="sw${cls}">${esc(w)}</span>`).join(' ');
+        document.getElementById('statementCopy').innerHTML = `
+            <p class="section-index"><span class="section-number">00 — </span>${esc(p.role || 'What I do')}</p>
+            <h2 class="statement-title">
+                <span class="statement-line">${words(p.headlineTop)}</span>
+                <span class="statement-line">${words(p.headlineBottom)} ${words(p.headlineAccent, ' accent-word')}</span>
+            </h2>`;
 
         document.getElementById('demoProject').textContent = firstRun.project;
         document.getElementById('demoQuery').textContent = firstRun.query;
@@ -184,7 +212,7 @@
             .map((ic, i) => `<li data-step="${i}"><span class="step-icon"><i class="fas ${ic}"></i></span><span class="step-label">${esc(list(firstRun.steps)[i])}</span><span class="step-ms"></span></li>`)
             .join('');
         document.querySelector('.agent-demo').hidden = !list(data.demo).length;
-        document.querySelector('.hero-inner').classList.toggle('no-demo', !list(data.demo).length);
+        document.querySelector('.statement-inner').classList.toggle('no-demo', !list(data.demo).length);
     }
 
     function renderMarquee(data) {
@@ -417,9 +445,12 @@
     }
 
     function startPageScript() {
-        const script = document.createElement('script');
-        script.src = 'script.js';
-        document.body.appendChild(script);
+        ['script.js', 'space.js'].forEach((src) => {
+            const script = document.createElement('script');
+            script.src = src;
+            script.async = false; // run in order: page script, then the 3D background
+            document.body.appendChild(script);
+        });
     }
 
     function showPreviewBanner() {
