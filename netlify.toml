@@ -17,6 +17,13 @@
 [functions.content]
   node_bundler = "esbuild"
 
+# The chat function pulls in CommonJS code that requires @langchain/core
+# subpath exports (e.g. "@langchain/core/prompts"). With the default bundler
+# those packages were left external and never shipped, so the live function
+# crashed on load with "Cannot find module". esbuild inlines them instead.
+[functions.chat]
+  node_bundler = "esbuild"
+
 # The admin panel should never appear in search results
 [[headers]]
   for = "/admin/*"
