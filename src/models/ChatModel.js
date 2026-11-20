@@ -1,11 +1,21 @@
 const AgentService = require("../services/AgentService");
 const KnowledgeModel = require("./KnowledgeModel");
-const { PortfolioRetriever, extractTopics } = require("../services/RetrieverService");
+const { createRetriever, extractTopics } = require("../services/RetrieverService");
 
 const sessionsStore = new Map();
 const MAX_HISTORY_MESSAGES = 10;
 
-const retriever = new PortfolioRetriever({ k: 3 });
+let retrieverPromise = null;
+
+function getRetriever() {
+  if (!retrieverPromise) {
+    retrieverPromise = createRetriever({ k: 3 });
+    retrieverPromise.catch(() => {
+      retrieverPromise = null;
+    });
+  }
+  return retrieverPromise;
+}
 
 class ChatModel {
   static getSessionHistory(sessionId) {
@@ -58,7 +68,7 @@ class ChatModel {
     // 2. Retrieve — LangChain retriever over the chunked knowledge base.
     stepStart = Date.now();
     traceEvent({ step: "retrieve", status: "start", label: "Searching knowledge base" });
-    const docs = await retriever.invoke(message);
+    const docs = await (await getRetriever()).invoke(message);
     const docTitles = docs.map((d) => d.metadata.title).join(", ");
     traceEvent({
       step: "retrieve",

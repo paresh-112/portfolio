@@ -17,15 +17,11 @@
 [functions.content]
   node_bundler = "esbuild"
 
-# The chat function's CommonJS code calls require("@langchain/core/prompts")
-# and friends. Inside the bundled chat.mjs those calls become __require(...),
-# which the file tracer does not follow, so the LangChain packages were never
+# The chat code loads LangChain with import() (src/config/langchain.js),
+# because require() calls to packages inside the bundled chat.mjs were not
 # shipped and the live function crashed with "Cannot find module".
-# Listing them as external makes Netlify copy each package, with its own
-# dependencies, into the function's node_modules as-is.
 [functions.chat]
   node_bundler = "esbuild"
-  external_node_modules = ["@langchain/core", "@langchain/groq", "groq-sdk"]
 
 # The admin panel should never appear in search results
 [[headers]]

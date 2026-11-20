@@ -1,6 +1,11 @@
-const { Groq } = require("groq-sdk");
-const { ChatGroq } = require("@langchain/groq");
-require("dotenv").config();
+const { loadLangChain } = require("./langchain");
+
+// .env is only for local development; deployed functions get real env vars.
+try {
+  require("dotenv").config();
+} catch {
+  // dotenv is not shipped with the chat function, which is fine.
+}
 
 const GROQ_MODEL = "llama-3.3-70b-versatile";
 const WHISPER_MODEL = "whisper-large-v3-turbo";
@@ -13,6 +18,10 @@ function getGroqApiKey() {
   return apiKey || null;
 }
 
+function hasGroqApiKey() {
+  return getGroqApiKey() !== null;
+}
+
 // Raw Groq client — used for Whisper audio transcription.
 function getGroqClient() {
   const apiKey = getGroqApiKey();
@@ -21,6 +30,8 @@ function getGroqClient() {
   }
 
   try {
+    // Loaded here so the chat function never needs groq-sdk directly.
+    const { Groq } = require("groq-sdk");
     return new Groq({ apiKey });
   } catch (err) {
     console.warn("Failed to initialize Groq client:", err.message);
@@ -29,12 +40,13 @@ function getGroqClient() {
 }
 
 // LangChain chat model — used by the agent pipeline.
-function getChatModel() {
+async function getChatModel() {
   const apiKey = getGroqApiKey();
   if (!apiKey) {
     return null;
   }
 
+  const { ChatGroq } = await loadLangChain();
   try {
     return new ChatGroq({
       apiKey,
@@ -51,6 +63,7 @@ function getChatModel() {
 module.exports = {
   getGroqClient,
   getChatModel,
+  hasGroqApiKey,
   GROQ_MODEL,
   WHISPER_MODEL
 };

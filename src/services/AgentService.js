@@ -1,15 +1,22 @@
-const { ChatPromptTemplate, MessagesPlaceholder } = require("@langchain/core/prompts");
-const { HumanMessage, AIMessage } = require("@langchain/core/messages");
-const { getChatModel, GROQ_MODEL } = require("../config/groq");
+const { getChatModel, hasGroqApiKey, GROQ_MODEL } = require("../config/groq");
+const { loadLangChain } = require("../config/langchain");
 const KnowledgeModel = require("../models/KnowledgeModel");
 
 // Persona/context/question flow in as template variables, so braces inside
 // the knowledge content are never parsed as template syntax.
-const promptTemplate = ChatPromptTemplate.fromMessages([
-  ["system", "{persona}\n\n=== CONTEXT DOCUMENTS (retrieved for this question) ===\n{context}"],
-  new MessagesPlaceholder("history"),
-  ["human", "{question}"]
-]);
+let promptTemplate = null;
+
+async function getPromptTemplate() {
+  if (!promptTemplate) {
+    const { ChatPromptTemplate, MessagesPlaceholder } = await loadLangChain();
+    promptTemplate = ChatPromptTemplate.fromMessages([
+      ["system", "{persona}\n\n=== CONTEXT DOCUMENTS (retrieved for this question) ===\n{context}"],
+      new MessagesPlaceholder("history"),
+      ["human", "{question}"]
+    ]);
+  }
+  return promptTemplate;
+}
 
 function formatContext(docs) {
   return docs
@@ -17,7 +24,8 @@ function formatContext(docs) {
     .join("\n\n");
 }
 
-function toLangChainHistory(historyMessages) {
+async function toLangChainHistory(historyMessages) {
+  const { HumanMessage, AIMessage } = await loadLangChain();
   return historyMessages.map((m) =>
     m.role === "user" ? new HumanMessage(m.content) : new AIMessage(m.content)
   );
@@ -25,7 +33,7 @@ function toLangChainHistory(historyMessages) {
 
 class AgentService {
   static isAvailable() {
-    return getChatModel() !== null;
+    return hasGroqApiKey();
   }
 
   static get model() {
@@ -35,17 +43,17 @@ class AgentService {
   // Streams the RAG generation chain: prompt(context docs + history) -> ChatGroq.
   // Returns the full reply plus token usage when the provider reports it.
   static async generate(message, historyMessages, docs, onToken) {
-    const model = getChatModel();
+    const model = await getChatModel();
     if (!model) {
       throw new Error("GROQ_API_KEY_MISSING");
     }
 
-    const chain = promptTemplate.pipe(model);
+    const chain = (await getPromptTemplate()).pipe(model);
 
     const stream = await chain.stream({
       persona: KnowledgeModel.getPersonaPrompt(),
       context: formatContext(docs),
-      history: toLangChainHistory(historyMessages),
+      history: await toLangChainHistory(historyMessages),
       question: message
     });
 

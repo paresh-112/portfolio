@@ -1,5 +1,4 @@
-const { BaseRetriever } = require("@langchain/core/retrievers");
-const { Document } = require("@langchain/core/documents");
+const { loadLangChain } = require("../config/langchain");
 const KnowledgeModel = require("../models/KnowledgeModel");
 
 const STOPWORDS = new Set([
@@ -74,30 +73,43 @@ function scoreDocuments(query, k = 3) {
   return top;
 }
 
-class PortfolioRetriever extends BaseRetriever {
-  static lc_name() {
-    return "PortfolioRetriever";
-  }
+// The retriever class extends LangChain's BaseRetriever, which is loaded
+// lazily (see config/langchain.js), so the class is built on first use.
+let PortfolioRetriever = null;
 
-  constructor(fields = {}) {
-    super(fields);
-    this.lc_namespace = ["portfolio", "retrievers"];
-    this.k = fields.k ?? 3;
-  }
+async function createRetriever(fields) {
+  if (!PortfolioRetriever) {
+    const { BaseRetriever, Document } = await loadLangChain();
 
-  async _getRelevantDocuments(query) {
-    return scoreDocuments(query, this.k).map(
-      ({ doc, score }) =>
-        new Document({
-          pageContent: doc.content,
-          metadata: { id: doc.id, title: doc.title, score }
-        })
-    );
+    class PortfolioRetrieverImpl extends BaseRetriever {
+      static lc_name() {
+        return "PortfolioRetriever";
+      }
+
+      constructor(fields = {}) {
+        super(fields);
+        this.lc_namespace = ["portfolio", "retrievers"];
+        this.k = fields.k ?? 3;
+      }
+
+      async _getRelevantDocuments(query) {
+        return scoreDocuments(query, this.k).map(
+          ({ doc, score }) =>
+            new Document({
+              pageContent: doc.content,
+              metadata: { id: doc.id, title: doc.title, score }
+            })
+        );
+      }
+    }
+
+    PortfolioRetriever = PortfolioRetrieverImpl;
   }
+  return new PortfolioRetriever(fields);
 }
 
 module.exports = {
-  PortfolioRetriever,
+  createRetriever,
   extractTopics,
   tokenize
 };
