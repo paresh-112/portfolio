@@ -2,6 +2,10 @@
 
 Run from the repo root:  python3 scripts/build_resume.py
 Needs reportlab (pip install reportlab).
+
+The layout follows Paresh's original Word/Canva resume: centred name and
+contact line, centred section titles over a thin rule, bold labels for
+skills, and plain bullet points written in simple language.
 """
 
 from pathlib import Path
@@ -11,6 +15,8 @@ from reportlab.lib.enums import TA_CENTER
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.styles import ParagraphStyle
 from reportlab.lib.units import mm
+from reportlab.pdfbase import pdfmetrics
+from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
     HRFlowable,
     KeepTogether,
@@ -25,230 +31,272 @@ from reportlab.platypus import (
 
 OUT = Path(__file__).resolve().parent.parent / "Paresh_Prajapati_Resume.pdf"
 
-INK = HexColor("#1a2333")
-ACCENT = HexColor("#4f46e5")
-MUTED = HexColor("#5a6478")
-RULE = HexColor("#c9d0de")
+BLACK = HexColor("#000000")
+LINK = HexColor("#1155cc")
+RULE = HexColor("#7f7f7f")
 
+PHONE = "+91 8849581032"
 EMAIL = "prajapatipareshkumar1032@gmail.com"
 LINKEDIN = "https://www.linkedin.com/in/paresh-prajapati-00a5b7243"
 GITHUB = "https://github.com/paresh-112"
-
-# Helvetica has no arrow glyph; the Symbol font does.
-ARROW = '<font name="Symbol">→</font>'
+WEBSITE = "https://pareshprajapati.netlify.app"
 
 # --- Content -----------------------------------------------------------------
 
 SUMMARY = (
-    "AI/ML Engineer with 3+ years of experience taking Generative AI products from design to "
-    "production. Shipped three live AI platforms — a catering marketplace assistant, a compliance "
-    "and safeguarding engine for schools, and a travel companion — alongside agentic report "
-    "writers, text-to-SQL agents with strict data guardrails, and a fine-tuning data pipeline. "
-    "Builds on LangChain/LangGraph, hybrid RAG, and async FastAPI services on AWS, with a focus on "
-    "evaluation, human oversight, cost efficiency, and latency."
+    "AI/ML Engineer with 3+ years of experience in Generative AI and LLM-based solutions. "
+    "I have built and deployed AI products that are running in production, including a catering "
+    "marketplace assistant, a compliance engine for schools and a travel assistant. I work on the "
+    "complete solution, from design and development to deployment on AWS, using tools like "
+    "LangChain, LangGraph, RAG and FastAPI, while continuously upgrading my skills."
 )
 
 SKILLS = [
-    ("GenAI &amp; Agents", "LLMs, LangChain, LangGraph, Deep Agents, ReAct &amp; tool-calling agents, "
-     "multi-agent workflows, text-to-SQL, prompt engineering, structured outputs (Pydantic)"),
-    ("RAG &amp; Search", "Hybrid dense + sparse retrieval, Qdrant, OpenSearch, FastEmbed, Docling, "
-     "chunking &amp; embedding pipelines, metadata-filtered retrieval"),
+    ("Programming Languages and related framework", "Python, FastAPI, Django, Flask, REST APIs"),
+    ("AI/ML Tools", "Generative AI, LLMs, Natural Language Processing (NLP), AI Agents, "
+     "Multi-agent workflows, RAG, Prompt engineering, Text-to-SQL, Fine-tuning (QLoRA), ML Algorithms"),
+    ("Libraries &amp; Frameworks", "LangChain, LangGraph, Deep Agents, Pydantic, Hugging Face "
+     "Transformers, Pandas, NumPy, TensorFlow, Scikit-learn"),
     ("LLM Providers", "AWS Bedrock, Anthropic Claude, OpenAI, OpenRouter"),
-    ("Speech, Vision &amp; Fine-tuning", "AssemblyAI (speaker diarization), AWS Textract, Tesseract OCR, "
-     "QLoRA, synthetic training data, Hugging Face Transformers"),
-    ("Backend", "Python, FastAPI, Django, Flask, REST APIs, SSE streaming, ARQ/Redis job queues, JWT auth"),
-    ("Data", "PostgreSQL, MySQL, MongoDB, Redis, SQLAlchemy, Alembic, sqlglot, PrestoDB, Cassandra"),
-    ("Cloud &amp; DevOps", "AWS (ECS Fargate, S3, Bedrock, Textract), Docker, Docker Compose"),
-    ("LLMOps &amp; Quality", "LLM evals with labelled sets &amp; replay, OpenTelemetry tracing "
-     "(Arize Phoenix), Sentry, token &amp; cost tracking, pytest, mypy --strict, ruff, pre-commit"),
-    ("ML Libraries", "Pandas, NumPy, TensorFlow, Scikit-learn"),
+    ("Vector DB &amp; Search", "Qdrant, OpenSearch, FastEmbed, Docling"),
+    ("OCR &amp; Speech", "AWS Textract, Tesseract OCR, AssemblyAI"),
+    ("Databases", "PostgreSQL, MySQL, MongoDB, Redis, Cassandra, PrestoDB, SQLAlchemy, Alembic"),
+    ("Cloud &amp; DevOps", "AWS (ECS Fargate, S3, Bedrock, Textract), Docker, Docker Compose, Git/GitHub"),
+    ("Testing &amp; Monitoring", "pytest, mypy, ruff, Sentry, OpenTelemetry, Arize Phoenix, LLM evaluation"),
+    ("Relevant Coursework", "Object Oriented Programming, Database Management System, Software Engineering"),
 ]
 
 EXPERIENCE = [
-    ("AI Engineer — Encodedots", "Feb 2026 – Present", [
-        "Own end-to-end AI solution development — system design, agent architecture, deployment, "
-        "and monitoring on AWS.",
-        "Design scalable multi-agent workflows (LangGraph) powering conversational assistants, "
-        "semantic search, and document intelligence in production.",
-        "Drive cost efficiency across LLM workloads through model selection, caching strategies, "
-        "token-usage tracking, and streaming architectures.",
+    ("Encodedots - AI Engineer", "Feb 2026 – Present", [
+        "Took full ownership of end-to-end AI solution development, from system design and agent "
+        "architecture to deployment and monitoring on AWS.",
+        "Designed scalable multi-agent workflows using LangGraph for chat assistants, semantic "
+        "search and document processing.",
+        "Reduced LLM cost and response time through model selection, caching, token usage "
+        "tracking and streaming responses.",
     ]),
     ("Software Engineer (AI/ML)", "Feb 2023 – Oct 2025", [
-        "Built and shipped AI/ML solutions optimizing operational processes — RAG frameworks, LLM "
-        "integrations, and NLP pipelines.",
-        "Collaborated across all project stages, from problem definition and data preparation to "
-        "model evaluation and delivery.",
-        "Developed production chatbots, document-analysis systems, and recommendation engines used "
-        "by real clients.",
+        "Gained hands-on experience in applying AI/ML solutions to optimize operational processes, "
+        "including RAG systems, LLM integrations and NLP pipelines.",
+        "Collaborated with team members on all stages of project development, from brainstorming "
+        "problem definitions to implementing and evaluating solutions.",
+        "Developed chatbots, document analysis systems and recommendation engines for clients.",
+        "Developed proficiency in data pre-processing, model training and evaluation techniques.",
     ]),
 ]
 
-FEATURED = [
-    ("CaterNest — AI-Powered Catering Marketplace", [
-        ("Business", "built the AI layer of a catering marketplace — customers assemble orders "
-         "conversationally in plain English, and caterers digitize PDF/photo menus into structured, "
-         "searchable listings in minutes instead of hours of manual entry."),
-        ("Agent stack", "LangGraph multi-step agent on AWS Bedrock (Claude) with tool-calling into "
-         "hybrid keyword + vector semantic search over OpenSearch."),
-        ("Production hardening", "persistent conversation memory via LangGraph PostgreSQL "
-         "checkpointer, PII-safe SSE token streaming, Redis caching, containerized services on ECS "
-         "Fargate."),
-        ("Menu extraction", "AWS Textract OCR + LLM structuring pipeline converting raw menu "
-         "documents into normalized catalog data."),
+PROJECTS = [
+    ("CaterNest - AI Catering Marketplace", [
+        "Built the AI part of a catering marketplace where customers can place orders by chatting "
+        "in plain English.",
+        "Developed a LangGraph agent on AWS Bedrock (Claude) that uses tool calling and hybrid "
+        "keyword and vector search on OpenSearch to find the right menu items.",
+        "Built a menu extraction pipeline with AWS Textract and an LLM that turns PDF and photo "
+        "menus into structured listings, which cut menu setup from hours to minutes.",
+        "Added conversation memory with a PostgreSQL checkpointer, Redis caching and streaming "
+        "responses with PII protection, and deployed the services on AWS ECS Fargate.",
     ]),
-    ("PolicyGuard — AI Compliance &amp; Safeguarding Engine for Schools", [
-        ("Business", "AI engine for a school safeguarding and compliance platform — policy scans "
-         "against the legislation register with gap lists and rewrites, incident and complaint "
-         "triage, excursion risk assessments, supplier certificate checks, CV parsing, and an AI "
-         "tool safety scanner graded against AI-in-education frameworks."),
-        ("Async job engine", "FastAPI with ARQ/Redis workers; every service queues work, returns a "
-         "job ID immediately, and streams staged progress over SSE with cancel and retry. "
-         "Contract-first Pydantic JSON lets the backend switch from mock to live with a config flag."),
-        ("Hybrid RAG", "dense + sparse retrieval on Qdrant (FastEmbed) over legislation and framework "
-         "libraries, scoped by jurisdiction and category; Docling parses PDF/DOCX for ingestion, "
-         "with stale chunks evicted when a document is replaced."),
-        ("Safety &amp; quality", "escalate-on-doubt triage with human sign-off (AI can raise "
-         "severity, never lower it); every scan records prompt version, model, and engine build; "
-         "an eval harness replays labelled cases; per-request cost tracking via OpenRouter."),
+    ("PolicyGuard - AI Compliance Engine for Schools", [
+        "Developed the AI engine for a school safeguarding and compliance platform that checks "
+        "school policies against legislation, lists the gaps and suggests rewrites.",
+        "It also handles incident and complaint triage, excursion risk assessments, supplier "
+        "certificate checks, CV parsing and safety checks for AI tools used in schools.",
+        "Built hybrid RAG (dense and sparse retrieval) on Qdrant over legislation documents, and "
+        "used Docling to read PDF and DOCX files.",
+        "Used FastAPI with ARQ/Redis background workers, so long tasks run as jobs and show live "
+        "progress to the user with cancel and retry.",
+        "Added human sign-off for triage results, tracking of prompt and model versions, an "
+        "evaluation set to test changes, and cost tracking for every request.",
     ]),
-    ("IsleWay — AI Travel Companion", [
-        ("Business", "AI concierge for an island travel platform — answers destination, itinerary, "
-         "and logistics questions from curated knowledge, turning static content into an "
-         "interactive planning experience."),
-        ("Backend", f"FastAPI service with clean route {ARROW} controller {ARROW} service architecture, agentic "
-         "chat with knowledge-base retrieval, and background workers."),
-        ("Production hygiene", "per-request tracing, structured logging, uniform response "
-         "envelopes, centralized error handling, strict typing (mypy --strict), Docker; consumed "
-         "by a Flutter cross-platform client."),
+    ("IsleWay - AI Travel Assistant", [
+        "Developed an AI assistant for an island travel platform that answers questions about "
+        "destinations, itineraries and travel planning.",
+        "Built the backend in FastAPI with a clean route, controller and service structure, "
+        "knowledge base retrieval and background workers.",
+        "Added request tracing, structured logging, error handling and strict type checking. The "
+        "API is used by a Flutter mobile app.",
     ]),
-]
-
-ADDITIONAL = [
-    ("FinScribe", "agent that writes and edits financial reports — a LangChain ReAct agent (Deep "
-     "Agents) behind FastAPI, streamed over SSE. Every figure is bound to the calculation engine "
-     "instead of typed by the model, so the agent cannot invent a number. LangGraph checkpointing "
-     "on Redis plus a custom MySQL saver, OpenTelemetry tracing (Arize Phoenix), token cost tracking."),
-    ("CarePilot", "role-based assistant for a care-services app with per-role toolsets "
-     "(participant, carer, support worker). Text-to-SQL runs through a guard that parses each "
-     "query (sqlglot), allows reads only, and rewrites it to the user's permitted data. Also "
-     "generates on-demand AI reports; FastAPI + ARQ workers on ECS."),
-    ("AthleteIQ", "generates baseline, concussion, and injury assessment reports from athlete data "
-     "with LangChain + Claude, and treatment plans from session recordings via AssemblyAI speaker "
-     "diarization; async Redis job queues, MySQL, JWT-secured API."),
-    ("MenuForge", f"training-data pipeline for an OCR {ARROW} structured JSON fine-tune. Labels are "
-     "generated first, then typeset into menu pages and degraded like real photos, so ground "
-     "truth is exact by construction; every page is verified against its label. Set up for QLoRA "
-     "fine-tuning of a vision-language model."),
-    ("QueryMind", "LLM converts natural-language questions into SQL executed via PrestoDB over "
-     "Cassandra, opening complex datasets to non-technical users."),
-    ("ClauseLens", "RAG framework for legal document analysis — precise extraction with citations, "
-     "in-document highlighting, and clause comparison across contracts."),
-    ("AskHR", "voice-enabled agentic assistant with dynamic tool triggering for leave balances, "
-     "holiday lookups, and RAG-grounded policy answers."),
-    ("MatchMind", "LLM-based matchmaking recommendations with demographic rules; early-stopping cut "
-     "unnecessary API spend and parallel batch execution processed thousands of profiles "
-     "efficiently."),
+    ("FinScribe - Financial Report Writer", [
+        "Built an AI agent that writes and edits financial reports using LangChain (Deep Agents) "
+        "and FastAPI, with streaming responses.",
+        "Every number in the report comes from the calculation engine and not from the model, so "
+        "the agent cannot make up figures.",
+        "Used Redis and MySQL to save the agent state, and OpenTelemetry (Arize Phoenix) for "
+        "tracing and token cost tracking.",
+    ]),
+    ("CarePilot - Care Services Assistant", [
+        "Developed a role-based assistant for a care services app, where participants, carers and "
+        "support workers each get their own set of tools.",
+        "Built a text-to-SQL feature with a safety check (sqlglot) that only allows read queries "
+        "and limits results to the data each user is allowed to see.",
+        "Added AI-generated reports using FastAPI and ARQ workers on AWS ECS.",
+    ]),
+    ("AthleteIQ - Athlete Assessment Reports", [
+        "Generated baseline, concussion and injury assessment reports from athlete data using "
+        "LangChain and Claude.",
+        "Created treatment plans from session recordings using AssemblyAI speech-to-text with "
+        "speaker detection.",
+        "Used Redis job queues, MySQL and a JWT-secured API.",
+    ]),
+    ("MenuForge - Training Data Pipeline", [
+        "Built a pipeline that creates training data for a model that reads menu images and "
+        "returns structured JSON.",
+        "The labels are created first and then turned into realistic menu pages, so every "
+        "training sample has an exact correct answer.",
+        "Prepared the data for QLoRA fine-tuning of a vision-language model.",
+    ]),
+    ("QueryMind - Database Communication Chatbot", [
+        "Developed a database communication chatbot leveraging PrestoDB to enable SQL query "
+        "capabilities on Cassandra databases. Integrated an LLM to convert natural language "
+        "queries into SQL.",
+        "This solution simplified database queries for non-technical users and improved access "
+        "to complex datasets.",
+    ]),
+    ("ClauseLens - Legal Document Search", [
+        "Developed a Retrieval-Augmented Generation (RAG) framework for legal document processing "
+        "and analysis, giving accurate answers from multiple documents.",
+        "Generated citations with direct links to specific document pages and highlighted the "
+        "relevant text within the source documents.",
+        "Compared clauses across documents to find key similarities and differences, which made "
+        "contract review faster.",
+    ]),
+    ("AskHR - Intelligent HR Assistant", [
+        "Developed an agentic AI HR assistant that gives employees easy access to HR services and "
+        "internal policy documents.",
+        "Designed a multi-tool system where tools are triggered based on user intent, for tasks "
+        "like leave balance queries, holiday lookups and policy questions.",
+        "Integrated voice input using speech recognition, and used RAG to answer from HR policy "
+        "documents.",
+    ]),
+    ("MatchMind - Matchmaking Recommendations", [
+        "Worked on an AI-based recommendation system that suggests the best matchmaking profiles "
+        "using LLMs and smart filtering.",
+        "Improved matching accuracy by applying demographic rules (age, gender, preferences).",
+        "Reduced API cost with an early-stopping feature and processed thousands of profiles "
+        "with parallel batch processing.",
+    ]),
 ]
 
 EDUCATION = [
-    ("<b>B.Tech, Information &amp; Communication Technology (ICT)</b> — Sankalchand Patel "
-     "University, Visnagar&nbsp;&nbsp;|&nbsp;&nbsp;CGPA: 8.33", "2019 – 2023"),
-    ("<b>Class XII</b> — Gurkul School of Science, Siddhpur", "2018 – 2019"),
-    ("<b>Class X</b> — SMT S.B Doshi High School, Nandotra", "2016 – 2017"),
+    ("Sankalchand Patel University, Visnagar", "B.Tech (ICT)&nbsp;&nbsp;|&nbsp;&nbsp;CGPA: <b>8.33</b>",
+     "2019 – 2023"),
+    ("Gurkul School of Science, Siddhpur", "Class XII", "2018 – 2019"),
+    ("SMT S.B Doshi High School, Nandotra", "Class X", "2016 – 2017"),
 ]
 
-LANGUAGES = "English (Proficient)&nbsp;&nbsp;•&nbsp;&nbsp;Hindi (Proficient)&nbsp;&nbsp;•&nbsp;&nbsp;Gujarati (Native)"
+LANGUAGES = [("English", "Proficient"), ("Hindi", "Proficient"), ("Gujarati", "Native")]
 
 # --- Layout ------------------------------------------------------------------
 
-base = ParagraphStyle("base", fontName="Helvetica", fontSize=9.5, leading=12.9, textColor=INK)
-name_s = ParagraphStyle("name", parent=base, fontName="Helvetica-Bold", fontSize=22, leading=26,
+# Embed Arial when it is available so the PDF looks the same in every viewer;
+# otherwise fall back to ReportLab's built-in Helvetica.
+FONT_DIR = Path("/System/Library/Fonts/Supplemental")
+try:
+    pdfmetrics.registerFont(TTFont("Body", str(FONT_DIR / "Arial.ttf")))
+    pdfmetrics.registerFont(TTFont("Body-Bold", str(FONT_DIR / "Arial Bold.ttf")))
+    pdfmetrics.registerFontFamily("Body", normal="Body", bold="Body-Bold")
+    FONT, BOLD, DOT = "Body", "Body-Bold", "\u25cf"
+except Exception:
+    FONT, BOLD, DOT = "Helvetica", "Helvetica-Bold", "*"
+
+base = ParagraphStyle("base", fontName=FONT, fontSize=9.6, leading=12.6, textColor=BLACK)
+name_s = ParagraphStyle("name", parent=base, fontName=BOLD, fontSize=21, leading=25,
                         alignment=TA_CENTER)
-title_s = ParagraphStyle("title", parent=base, fontName="Helvetica-Bold", fontSize=10.5,
-                         leading=14, textColor=ACCENT, alignment=TA_CENTER)
-contact_s = ParagraphStyle("contact", parent=base, textColor=MUTED, alignment=TA_CENTER)
-section_s = ParagraphStyle("section", parent=base, fontName="Helvetica-Bold", fontSize=11.5,
-                           leading=14, textColor=ACCENT, spaceBefore=9)
-entry_s = ParagraphStyle("entry", parent=base, fontName="Helvetica-Bold", fontSize=10.5, leading=14)
-right_s = ParagraphStyle("right", parent=base, textColor=MUTED, alignment=2)
-skill_s = ParagraphStyle("skill", parent=base, spaceAfter=1.5)
+contact_s = ParagraphStyle("contact", parent=base, fontSize=9.5, alignment=TA_CENTER)
+section_s = ParagraphStyle("section", parent=base, fontSize=11.5, leading=14, alignment=TA_CENTER,
+                           spaceBefore=10)
+entry_s = ParagraphStyle("entry", parent=base, fontName=BOLD, spaceBefore=6)
+date_s = ParagraphStyle("date", parent=base, spaceAfter=1)
+skill_s = ParagraphStyle("skill", parent=base, leftIndent=8, spaceAfter=2)
+right_s = ParagraphStyle("right", parent=base, alignment=2)
 
-CONTENT_W = A4[0] - 2 * 20 * mm
-
-
-def section(title):
-    heading = Paragraph(title.upper(), section_s)
-    rule = HRFlowable(width="100%", thickness=0.8, color=RULE, spaceBefore=2, spaceAfter=5)
-    heading.keepWithNext = rule.keepWithNext = True
-    return [heading, rule]
+MARGIN = 16 * mm
+CONTENT_W = A4[0] - 2 * MARGIN
 
 
-def header_row(left, right, left_style=entry_s):
-    t = Table([[Paragraph(left, left_style), Paragraph(right, right_s)]],
-              colWidths=[CONTENT_W * 0.78, CONTENT_W * 0.22])
-    t.setStyle(TableStyle([
-        ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
-        ("LEFTPADDING", (0, 0), (-1, -1), 4),
-        ("RIGHTPADDING", (0, 0), (-1, -1), 4),
-        ("TOPPADDING", (0, 0), (-1, -1), 3),
-        ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
-    ]))
-    t.keepWithNext = True
-    return t
+def link(url, text):
+    return f'<font color="{LINK.hexval().replace("0x", "#")}"><u><a href="{url}">{text}</a></u></font>'
+
+
+def section(title, first):
+    """A centred section title over a rule, kept on the same page as its first entry."""
+    heading = Paragraph(title, section_s)
+    rule = HRFlowable(width="100%", thickness=0.6, color=RULE, spaceBefore=2, spaceAfter=4)
+    return [KeepTogether([heading, rule] + (first if isinstance(first, list) else [first]))]
 
 
 def bullets(items):
     return ListFlowable(
-        [ListItem(Paragraph(text, base), leftIndent=10, value="•") for text in items],
-        bulletType="bullet", bulletFontSize=10, leftIndent=10, bulletOffsetY=0, spaceBefore=1,
+        [ListItem(Paragraph(text, base), leftIndent=22, value="•") for text in items],
+        bulletType="bullet", bulletFontName=FONT, bulletFontSize=10, leftIndent=22, bulletOffsetY=0, spaceBefore=1,
     )
 
 
-def labelled(items):
-    return bullets([f"<b>{label}:</b> {text}" for label, text in items])
+def entry(title, items, date=None):
+    parts = [Paragraph(title, entry_s)]
+    if date:
+        parts.append(Paragraph(date, date_s))
+    parts.append(bullets(items))
+    return parts
+
+
+def education_row(school, detail, years):
+    t = Table([
+        [Paragraph(f"<b>{school}</b>", base), ""],
+        [Paragraph(detail, base), Paragraph(years, right_s)],
+    ], colWidths=[CONTENT_W * 0.75, CONTENT_W * 0.25])
+    t.setStyle(TableStyle([
+        ("VALIGN", (0, 0), (-1, -1), "BOTTOM"),
+        ("LEFTPADDING", (0, 0), (-1, -1), 8),
+        ("RIGHTPADDING", (0, 0), (-1, -1), 8),
+        ("TOPPADDING", (0, 0), (-1, -1), 1),
+        ("BOTTOMPADDING", (0, 0), (-1, -1), 1),
+    ]))
+    return [t, Spacer(1, 3)]
+
+
+def languages_row():
+    dots = f'<font size="8">{DOT * 5}</font>'
+    cells = [Paragraph(f"{lang} ({level})&nbsp;&nbsp;&nbsp;{dots}", ParagraphStyle(
+        "lang", parent=base, alignment=TA_CENTER)) for lang, level in LANGUAGES]
+    t = Table([cells], colWidths=[CONTENT_W / 3] * 3)
+    t.setStyle(TableStyle([("TOPPADDING", (0, 0), (-1, -1), 2)]))
+    return t
 
 
 def build():
-    link = f'<font color="{ACCENT.hexval().replace("0x", "#")}">'
+    sep = "&nbsp;|&nbsp;"
     story = [
         Paragraph("Paresh Prajapati", name_s),
-        Paragraph("AI/ML Engineer&nbsp;&nbsp;|&nbsp;&nbsp;Generative AI Specialist", title_s),
         Paragraph(
-            f'+91 8849581032&nbsp;&nbsp;|&nbsp;&nbsp;{link}<a href="mailto:{EMAIL}">{EMAIL}</a></font>&nbsp;&nbsp;|&nbsp;&nbsp;'
-            f'{link}<a href="{LINKEDIN}">LinkedIn</a></font>&nbsp;&nbsp;|&nbsp;&nbsp;'
-            f'{link}<a href="{GITHUB}">GitHub</a></font>',
+            f"{PHONE}{sep}{link('mailto:' + EMAIL, EMAIL)}{sep}{link(LINKEDIN, 'LinkedIn')}"
+            f"{sep}{link(GITHUB, 'GitHub')}{sep}{link(WEBSITE, 'Portfolio')}",
             contact_s,
         ),
-        Spacer(1, 4),
+        Spacer(1, 2),
     ]
 
-    story += section("Summary") + [Paragraph(SUMMARY, base)]
+    story += section("Summary", Paragraph(SUMMARY, base))
 
-    story += section("Technical Skills")
-    story += [Paragraph(f"<b>{k}:</b> {v}", skill_s) for k, v in SKILLS]
+    story += section("Technical Skills", [Paragraph(f"<b>{k}:</b> {v}", skill_s) for k, v in SKILLS])
 
-    story += section("Experience")
-    for role, dates, items in EXPERIENCE:
-        story.append(KeepTogether([header_row(role, dates), bullets(items)]))
+    jobs = [entry(title, items, dates) for title, dates, items in EXPERIENCE]
+    story += section("Experience", jobs[0]) + [KeepTogether(j) for j in jobs[1:]]
 
-    # Projects may break across a page; their title rows stay with the bullets.
-    story += section("Featured Production Projects")
-    for title, items in FEATURED:
-        story += [header_row(title, "In Production"), labelled(items)]
+    projects = [entry(title, items) for title, items in PROJECTS]
+    story += section("Projects", projects[0]) + [KeepTogether(p) for p in projects[1:]]
 
-    story += section("Additional Projects")
-    story.append(labelled(ADDITIONAL))
+    rows = [education_row(*row) for row in EDUCATION]
+    story += section("Education", [Spacer(1, 3)] + [f for r in rows for f in r])
 
-    story += section("Education")
-    for left, right in EDUCATION:
-        story.append(header_row(left, right, left_style=base))
-
-    story += section("Languages") + [Paragraph(LANGUAGES, base)]
+    story += section("Languages", languages_row())
 
     doc = SimpleDocTemplate(
-        str(OUT), pagesize=A4, leftMargin=20 * mm, rightMargin=20 * mm,
+        str(OUT), pagesize=A4, leftMargin=MARGIN, rightMargin=MARGIN,
         topMargin=14 * mm, bottomMargin=14 * mm,
-        title="Paresh Prajapati — Resume", author="Paresh Prajapati",
+        title="Paresh Prajapati - Resume", author="Paresh Prajapati",
+        subject="Resume of Paresh Prajapati, AI/ML Engineer",
+        keywords="Paresh Prajapati, AI/ML Engineer, Generative AI, LLM, RAG, LangChain, LangGraph",
     )
     doc.build(story)
     print(f"Wrote {OUT}")
