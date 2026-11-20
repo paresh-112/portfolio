@@ -7,7 +7,9 @@ try {
   // dotenv is not shipped with the chat function, which is fine.
 }
 
-const GROQ_MODEL = "llama-3.3-70b-versatile";
+// Groq shut down llama-3.3-70b-versatile on 2026-08-16 and named
+// openai/gpt-oss-120b as its replacement (console.groq.com/docs/deprecations).
+const GROQ_MODEL = "openai/gpt-oss-120b";
 const WHISPER_MODEL = "whisper-large-v3-turbo";
 
 function getGroqApiKey() {
@@ -52,7 +54,11 @@ async function getChatModel() {
       apiKey,
       model: GROQ_MODEL,
       temperature: 0.6,
-      maxTokens: 600
+      // gpt-oss is a reasoning model: its hidden reasoning tokens count
+      // toward this limit, so it is higher than the visible reply needs.
+      // Low effort keeps replies fast; the reasoning never reaches the chat.
+      reasoningEffort: "low",
+      maxTokens: 1500
     });
   } catch (err) {
     console.warn("Failed to initialize ChatGroq model:", err.message);
